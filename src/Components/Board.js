@@ -10,7 +10,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-    },
+    }
 }
 
 export class Board extends Component {
@@ -21,7 +21,7 @@ export class Board extends Component {
         let board = [];
 
         for (j = 0; j < 10; j++) {
-            rows.push(<Tile value={0}/>)
+            rows.push(<Tile/>)
         }
 
         for (i = 0; i < 10; i++) {
