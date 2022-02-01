@@ -16,45 +16,45 @@ import flag from '../flag.png';
 
 export class Tile extends Component {
 
-    state = {
+    state ={
         color: 'rgb(161,160,160)',
-        click: false,
-        hasMine: this.props.hasMine,
-        adjacentMines: 0,
-        x: this.props.x,
-        y: this.props.y,
-        image: null
+        value: ""
     }
 
-    changeMine = (value) => {
-        this.setState({adjacentMines: value});
+    getImage = () => {
+        if (this.state.value === "F") {
+            return "Flag";
+
+        } else if (this.state.value === "X") {
+            return "Mine icon";
+
+        } else if (this.state.value === "") {
+            return null;
+        }
+
+        return this.state.value // of image in array
     }
 
     changeColor = () => {
-        if (this.state.hasMine) {
-            this.setState({color: 'rgb(255,0,0)'});
-            this.setState({image: mine});
-            this.setState({click: true});
-
-        } else if (this.state.image !== flag) {
-            this.setState({color: 'rgb(255,255,255)'});
-            this.setState({click: true});
-        }
-    }
-
-    testText () {
-        console.log("test");
+        this.setState({color: 'rgb(255,255,255)'});
+        // if (this.state.hasMine) {
+        //     this.setState({color: 'rgb(255,0,0)'});
+        //     this.setState({value: "X"});
+        //     this.setState({click: true});
+        //
+        // } else if (this.state.value !== "F") {
+        //     this.setState({color: 'rgb(255,255,255)'});
+        //     this.setState({click: true});
+        // }
     }
 
     flag = (e) => {
         e.preventDefault();
-        if (this.state.click === false) {
-            if (this.state.image === flag) {
-                this.setState({image: one}); // index of hasMine - 1 from image array
+        if (this.state.value === "F") {
+            this.setState({value: ""}); // index of hasMine - 1 from image array
 
-            } else if (this.state.value !== flag) {
-                this.setState({image: flag});
-            }
+        } else if (this.state.value !== "F") {
+            this.setState({value: "F"});
         }
     }
 
@@ -69,8 +69,7 @@ export class Tile extends Component {
                     backgroundColor: this.state.color,
                     margin: '0.5px'}}
                 onClick={this.changeColor}>
-                <img src = {this.state.image}/>
-                {/*{this.state.value}*/}
+                {this.state.value}
             </button>
         );
     }

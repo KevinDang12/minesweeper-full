@@ -13,16 +13,67 @@ const styles = {
     }
 }
 
-let board;
-const boardSize = 5;
+const boardSize = 8;
 
 export class Board extends Component {
 
-    // state = {
-    //     adjacentMines: 0
-    // }
+    state = {
+        boardData: this.initTileProperties(this.props.boardSize),
+        mineCount: 0
+    };
 
-    checkAdjacent = (tile) => {
+    displayBoard(data) {
+        let x, y;
+        let rows = [];
+        let board = [];
+
+        for (x = 0; x < 10; x++) {
+            for (y = 0; y < 10; y++) {
+                rows.push(<Tile/>); // bind some things to this handleClick, handleRightClick
+            }
+            board.push(<div style={styles.board}>{rows}</div>);
+            rows = [];
+        }
+
+        return board;
+    };
+
+    initTileProperties(size) {
+        let tileProps = [];
+        let mineCount = 0;
+
+        for (let x = 0; x < size; x++) {
+            tileProps.push([]);
+            for (let y = 0; y < size; y++) {
+                tileProps[x][y] = {
+                    x: x,
+                    y: y,
+                    color: 'rgb(161,160,160)',
+                    click: false,
+                    hasMine: Math.random() < 0.25,
+                    flagged: false,
+                    adjacentMines: 0,
+                    disable: false,
+                }
+
+                if (tileProps[x][y].hasMine) {
+                    mineCount += 1;
+                }
+            }
+        }
+
+        this.setState({mineCount: mineCount});
+
+        for (let y = 0; y < size; y++) {
+            for (let x = 0; x < size; x++) {
+                let tile = tileProps[x][y];
+                tile.adjacentMines = this.numOfAdjacentMines(this.checkAdjacent(tile));
+            }
+        }
+        return tileProps;
+    }
+
+    checkAdjacent(tile) {
 
         const area = [
             -1, -1,
@@ -36,8 +87,8 @@ export class Board extends Component {
         ]
 
         let adjacent = [];
-        let tileX = tile.props.x;
-        let tileY = tile.props.y;
+        let tileX = tile.x;
+        let tileY = tile.y;
 
         for (let i = 0; i < area.length; i += 2) {
             let adjacentX = area[i];
@@ -47,54 +98,105 @@ export class Board extends Component {
             let currentY = adjacentY + tileY;
 
             if (currentX >= 0 && currentY >= 0 && currentX < boardSize && currentY < boardSize) {
-                adjacent.push(board[currentX][currentY]);
+                adjacent.push(this.state.boardData[currentX][currentY]);
             }
         }
-
         return adjacent;
     }
 
-    numOfAdjacentMines = (adjacent) => {
+    numOfAdjacentMines(adjacent) {
         let count = 0;
         for (const tile of adjacent) {
-            if (tile.props.hasMine) {
+            if (tile.hasMine) {
                 count += 1;
             }
         }
         return count;
     }
 
-    displayBoard = () => {
-        let x, y;
-        let rows = [];
-        board = [];
+    onClick(x, y) {
+        let tile = this.state.boardData[x][y];
 
-        for (y = 0; y < boardSize; y++) {
-            for (x = 0; x < boardSize; x++) {
-                let mine = Math.random() < 0.25;
-                let tile = <Tile x={x} y={y} hasMine={mine}/>;
-                rows.push(tile);
-            }
-            board.push(rows);
-            rows = [];
+        if (!tile.click && !tile.flagged) {
+            this.setState({color: 'rgb(255,255,255)'});
+        }
+    }
+
+    onContextMenu(e) {
+        e.preventDefault();
+        if (this.state.value === "F") {
+            this.setState({value: ""}); // index of hasMine - 1 from image array
+
+        } else if (this.state.value !== "F") {
+            this.setState({value: "F"});
+        }
+    }
+
+    clearArea() {
+        let tile = this.state.boardData;
+
+        if (tile.click) return;
+
+        if (tile.hasMine) {
+            this.revealMines();
+            return;
         }
 
-        for (x = 0; x < boardSize; x++) {
-            for (y = 0; y < boardSize; y++) {
-                const numOfMines = this.numOfAdjacentMines(this.checkAdjacent(board[x][y]));
-                console.log(board[x][y].props.adjacentMines);
-                // board[x][y].setState({adjacentMines: numOfMines});
-                // board[x][y].setState({numOfAdjacentMines: numOfMines});
-            }
+        if (!tile.flag) {
+            tile.click = true;
+            if (this.state.mineCount > 0)
+                this.setState({mineCount: this.state.mineCount - 1});
+            return;
         }
 
-        return board;
-    };
+        if (tile.adjacentMines === 0) {
+            this.checkAdjacent(tile).forEach(tile => this.clearArea);
+        }
+    }
+
+    revealMines() {
+        const size = this.props.size;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                let tile = this.state.boardData[x][y];
+                tile.disable = true;
+
+                // reveal Mines
+            }
+        }
+    }
+
+    checkWin() {
+        const size = this.props.size;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                let tile = this.state.boardData[x][y];
+
+                if (!tile.hasMine && !tile.click) return false;
+            }
+        }
+        return true;
+    }
+
+    endGame() {
+        const size = this.props.size;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                let tile = this.state.boardData[x][y];
+                tile.disable = true;
+
+                // pass to child
+            }
+        }
+    }
 
     render() {
         return(
             <div className={"board"} style={{padding: '100px'}}>
-                {this.displayBoard()}
+                {this.displayBoard(this.state.boardData)}
             </div>
         );
     }
