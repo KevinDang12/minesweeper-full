@@ -17,59 +17,50 @@ import flag from '../flag.png';
 export class Tile extends Component {
 
     state ={
-        color: 'rgb(161,160,160)',
         value: ""
     }
 
-    getImage = () => {
-        if (this.state.value === "F") {
-            return "Flag";
+    getImage() {
+        const {value} = this.props;
 
-        } else if (this.state.value === "X") {
-            return "Mine icon";
+        if (value.flag) {
+            return "F";
 
-        } else if (this.state.value === "") {
+        } else if (value.hasMine) {
+            return "X";
+
+        } else if (value.adjacentMines === 0) {
             return null;
         }
 
-        return this.state.value // of image in array
+        return value.adjacentMines // of image in array
     }
 
-    changeColor = () => {
-        this.setState({color: 'rgb(255,255,255)'});
-        // if (this.state.hasMine) {
-        //     this.setState({color: 'rgb(255,0,0)'});
-        //     this.setState({value: "X"});
-        //     this.setState({click: true});
-        //
-        // } else if (this.state.value !== "F") {
-        //     this.setState({color: 'rgb(255,255,255)'});
-        //     this.setState({click: true});
-        // }
-    }
+    changeColor() {
+        const {value} = this.props;
 
-    flag = (e) => {
-        e.preventDefault();
-        if (this.state.value === "F") {
-            this.setState({value: ""}); // index of hasMine - 1 from image array
+        if (!value.click) {
+            this.setState({color: 'rgb(161,160,160)'})
 
-        } else if (this.state.value !== "F") {
-            this.setState({value: "F"});
+        } else {
+            this.setState({color: 'rgb(255,255,255)'})
         }
     }
 
     render() {
+        const {color, value} = this.props;
+
         return(
             <button
                 className={"tile"}
-                onContextMenu={this.flag}
+                onContextMenu={this.props.onContextMenu}
                 style={{
                     height: '50px',
                     width: '50px',
-                    backgroundColor: this.state.color,
+                    backgroundColor: color,
                     margin: '0.5px'}}
-                onClick={this.changeColor}>
-                {this.state.value}
+                onClick={this.props.onClick}>
+                {value}
             </button>
         );
     }

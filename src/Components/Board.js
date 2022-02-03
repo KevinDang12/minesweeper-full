@@ -13,34 +13,51 @@ const styles = {
     }
 }
 
-const boardSize = 8;
-
 export class Board extends Component {
 
     state = {
+        boardSize: this.props.boardSize,
         boardData: this.initTileProperties(this.props.boardSize),
-        mineCount: 0
+        // mineCount: this.countMines(this.state.boardData)
     };
+
+    // reset() {
+    //     let newGame = this.initTileProperties(this.props.size);
+    //     this.setState({boardData: newGame});
+    // }
 
     displayBoard(data) {
-        let x, y;
-        let rows = [];
-        let board = [];
+        return data.map(row => {
+            return row.map(item => {
+                return(
+                    <div>
+                        <Tile onClick={() => this.onClick(item.x, item.y)}
+                              onContextMenu={(e) => this.onContextMenu(e, item.x, item.y)}
+                              color={item.color}
+                        />
+                    </div>
+                );
+            })
+        })
+    };
 
-        for (x = 0; x < 10; x++) {
-            for (y = 0; y < 10; y++) {
-                rows.push(<Tile/>); // bind some things to this handleClick, handleRightClick
+    countMines(data) {
+        const size = this.props.boardSize;
+        let mineCount = 0;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                if (data[x][y].hasMine) {
+                    mineCount += 1;
+                }
             }
-            board.push(<div style={styles.board}>{rows}</div>);
-            rows = [];
         }
 
-        return board;
-    };
+        return mineCount;
+    }
 
     initTileProperties(size) {
         let tileProps = [];
-        let mineCount = 0;
 
         for (let x = 0; x < size; x++) {
             tileProps.push([]);
@@ -48,6 +65,7 @@ export class Board extends Component {
                 tileProps[x][y] = {
                     x: x,
                     y: y,
+                    value: "",
                     color: 'rgb(161,160,160)',
                     click: false,
                     hasMine: Math.random() < 0.25,
@@ -55,25 +73,19 @@ export class Board extends Component {
                     adjacentMines: 0,
                     disable: false,
                 }
-
-                if (tileProps[x][y].hasMine) {
-                    mineCount += 1;
-                }
             }
         }
-
-        this.setState({mineCount: mineCount});
 
         for (let y = 0; y < size; y++) {
             for (let x = 0; x < size; x++) {
                 let tile = tileProps[x][y];
-                tile.adjacentMines = this.numOfAdjacentMines(this.checkAdjacent(tile));
+                tile.adjacentMines = this.numOfAdjacentMines(this.checkAdjacent(tile, size, tileProps));
             }
         }
         return tileProps;
     }
 
-    checkAdjacent(tile) {
+    checkAdjacent(tile, size, data) {
 
         const area = [
             -1, -1,
@@ -97,8 +109,8 @@ export class Board extends Component {
             let currentX = adjacentX + tileX;
             let currentY = adjacentY + tileY;
 
-            if (currentX >= 0 && currentY >= 0 && currentX < boardSize && currentY < boardSize) {
-                adjacent.push(this.state.boardData[currentX][currentY]);
+            if (currentX >= 0 && currentY >= 0 && currentX < size && currentY < size) {
+                adjacent.push(data[currentX][currentY]);
             }
         }
         return adjacent;
@@ -115,26 +127,46 @@ export class Board extends Component {
     }
 
     onClick(x, y) {
-        let tile = this.state.boardData[x][y];
+        let data = this.state.boardData;
+
+        let tile = data[x][y];
+        console.log(tile.x);
+        console.log(tile.y);
 
         if (!tile.click && !tile.flagged) {
-            this.setState({color: 'rgb(255,255,255)'});
+            // this.setState({color: 'rgb(255,255,255)'});
+            tile.color = 'rgb(255,255,255)';
+            this.clearArea(tile);
+
+        } else if (tile.hasMine) {
+            this.revealMines();
         }
+
+        this.setState({boardData: data});
+        //update boarddata
     }
 
-    onContextMenu(e) {
+    onContextMenu(e, x, y) {
         e.preventDefault();
-        if (this.state.value === "F") {
-            this.setState({value: ""}); // index of hasMine - 1 from image array
 
-        } else if (this.state.value !== "F") {
-            this.setState({value: "F"});
+        let data = this.state.boardData[x][y];
+        let tile = data[x][y];
+        console.log(tile.x);
+        console.log(tile.y);
+
+        if (tile.flag) {
+            tile.flag = false;
+            tile.value = ""; // index of hasMine - 1 from image array
+
+        } else if (!tile.flag) {
+            tile.flag = true;
+            tile.value = "F";
         }
+
+        this.setState({boardData: data});
     }
 
-    clearArea() {
-        let tile = this.state.boardData;
-
+    clearArea(tile) {
         if (tile.click) return;
 
         if (tile.hasMine) {
@@ -150,7 +182,11 @@ export class Board extends Component {
         }
 
         if (tile.adjacentMines === 0) {
-            this.checkAdjacent(tile).forEach(tile => this.clearArea);
+            let adjacent = this.checkAdjacent(tile);
+
+            for (const value of adjacent) {
+                this.clearArea(value);
+            }
         }
     }
 
