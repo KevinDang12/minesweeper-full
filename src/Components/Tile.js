@@ -10,15 +10,7 @@ import eight from '../8.png';
 import mine from '../bomb.png';
 import flag from '../flag.png';
 
-/*
- * Change the adjacent mines value on set up
- */
-
 export class Tile extends Component {
-
-    state ={
-        value: ""
-    }
 
     getImage() {
         const {value} = this.props;
@@ -34,17 +26,6 @@ export class Tile extends Component {
         }
 
         return value.adjacentMines // of image in array
-    }
-
-    changeColor() {
-        const {value} = this.props;
-
-        if (!value.click) {
-            this.setState({color: 'rgb(161,160,160)'})
-
-        } else {
-            this.setState({color: 'rgb(255,255,255)'})
-        }
     }
 
     render() {
