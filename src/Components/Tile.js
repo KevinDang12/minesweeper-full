@@ -40,6 +40,7 @@ export class Tile extends Component {
                     width: '50px',
                     backgroundColor: color,
                     margin: '0.5px'}}
+                disabled={this.props.disabled}
                 onClick={this.props.onClick}>
                 {value}
             </button>
