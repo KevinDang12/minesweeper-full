@@ -100,7 +100,7 @@ export class Board extends Component {
 
                 if (tile === data[tileX][tileY]) continue;
 
-                tile.hasMine = Math.random() < 0.25;
+                tile.hasMine = Math.random() < 0.2;
             }
         }
 
@@ -122,6 +122,7 @@ export class Board extends Component {
         }
         this.setState({mineCount: count});
         console.log(this.state.mineCount);
+
         return data;
     }
 
@@ -180,12 +181,12 @@ export class Board extends Component {
         if (tile.hasMine && !tile.flag) {
             data = this.revealMines();
 
-        } else if (!tile.click && !tile.flag) {
+        } else if (!tile.click && !tile.flag && this.state.firstClick) {
             tile.click = true;
             tile.value = tile.adjacentMines;
             tile.color = 'rgb(255,255,255)';
 
-            if (tile.adjacentMines <= 0) {
+            if (tile.adjacentMines === 0) {
                 let adjacent = this.checkAdjacent(tile);
                 for (const value of adjacent) {
                     this.onClick(value.x, value.y);
@@ -289,8 +290,8 @@ export class Board extends Component {
                     let tile = data[x][y];
                     if (!tile.hasMine) {
                         tile.color = 'rgb(201,253,241)';
-                        tile.disabled = true;
                     }
+                    tile.disabled = true;
                 }
             }
         }
