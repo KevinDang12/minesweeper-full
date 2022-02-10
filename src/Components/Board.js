@@ -16,7 +16,6 @@ const styles = {
 export class Board extends Component {
 
     state = {
-        boardSize: this.props.boardSize,
         boardData: this.initTileProperties(this.props.boardSize),
         firstClick: false,
         totalMines: 0,
@@ -24,10 +23,15 @@ export class Board extends Component {
         lostGame: false
     };
 
-    // reset() {
-    //     let newGame = this.initTileProperties(this.props.size);
-    //     this.setState({boardData: newGame});
-    // }
+    reset = () => {
+        this.setState({
+            boardData: this.initTileProperties(this.props.boardSize),
+            firstClick: false,
+            totalMines: 0,
+            mineCounter: 0,
+            lostGame: false
+        });
+    };
 
     displayBoard(data) {
         let rows = [];
@@ -53,21 +57,6 @@ export class Board extends Component {
 
         return board;
     };
-
-    countMines(data) {
-        const size = this.props.boardSize;
-        let mineCount = 0;
-
-        for (let x = 0; x < size; x++) {
-            for (let y = 0; y < size; y++) {
-                if (data[x][y].hasMine) {
-                    mineCount += 1;
-                }
-            }
-        }
-
-        return mineCount;
-    }
 
     initTileProperties(size) {
         let tileProps = [];
@@ -122,8 +111,9 @@ export class Board extends Component {
                 }
             }
         }
-        this.setState({totalMines: count});
-        this.setState({mineCounter: count});
+        this.setState({
+            totalMines: count,
+            mineCounter: count});
         return data;
     }
 
@@ -246,7 +236,7 @@ export class Board extends Component {
     }
 
     revealMines() {
-        const size = this.state.boardSize;
+        const size = this.props.boardSize;
         let data = this.state.boardData;
 
         for (let x = 0; x < size; x++) {
@@ -258,7 +248,7 @@ export class Board extends Component {
                     tile.color = 'rgb(255,0,0)';
 
                 } else if (!tile.hasMine && tile.flag) {
-                    tile.color = 'rgb(255,196,0)';
+                    tile.color = 'rgb(255,106,0)';
 
                 } else if (tile.hasMine && tile.flag) {
                     tile.color = 'rgb(13,154,5)';
@@ -271,7 +261,7 @@ export class Board extends Component {
     }
 
     checkWin(count) {
-        const size = this.state.boardSize;
+        const size = this.props.boardSize;
         let data = this.state.boardData;
 
         if (count === 0) {
@@ -288,7 +278,7 @@ export class Board extends Component {
     }
 
     endGame(data, count) {
-        const size = this.state.boardSize;
+        const size = this.props.boardSize;
 
         if (this.checkWin(count) === true) {
             for (let x = 0; x < size; x++) {
@@ -306,13 +296,16 @@ export class Board extends Component {
     }
 
     render() {
+        const {boardData} = this.state;
+
         return(
             <div>
                 <div>
                     MineCount: {this.state.mineCounter}
                 </div>
+                <button onClick={this.reset}>Reset</button>
                 <div className={"board"} style={{padding: '100px'}}>
-                    {this.displayBoard(this.state.boardData)}
+                    {this.displayBoard(boardData)}
                 </div>
             </div>
         );
