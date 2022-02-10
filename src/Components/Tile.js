@@ -13,23 +13,23 @@ import flag from '../flag.png';
 export class Tile extends Component {
 
     getImage() {
-        const {value} = this.props;
+        const images = [one, two, three, four, five, six, seven, eight, mine, flag];
+        const {value, click, lostGame} = this.props;
 
-        if (value.flag) {
-            return "F";
+        if (value === "F") {
+            return images[9];
 
-        } else if (value.hasMine) {
-            return "X";
+        } else if (value === "X" && lostGame) {
+            return images[8];
 
-        } else if (value.adjacentMines === 0) {
-            return null;
+        } else if (value > 0 && click) {
+            return images[value - 1];
         }
-
-        return value.adjacentMines // of image in array
+        return null;
     }
 
     render() {
-        const {color, value} = this.props;
+        const {color} = this.props;
 
         return(
             <button
@@ -42,7 +42,7 @@ export class Tile extends Component {
                     margin: '0.5px'}}
                 disabled={this.props.disabled}
                 onClick={this.props.onClick}>
-                {value}
+                <img src={this.getImage()}/>
             </button>
         );
     }
