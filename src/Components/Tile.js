@@ -14,12 +14,12 @@ export class Tile extends Component {
 
     getImage() {
         const images = [one, two, three, four, five, six, seven, eight, mine, flag];
-        const {value, click, lostGame} = this.props;
+        const {value, click, endGame} = this.props;
 
         if (value === "F") {
             return images[9];
 
-        } else if (value === "X" && lostGame) {
+        } else if (value === "X" && endGame) {
             return images[8];
 
         } else if (value > 0 && click) {

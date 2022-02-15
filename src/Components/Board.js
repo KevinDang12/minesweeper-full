@@ -10,6 +10,16 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+    },
+    counter: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    reset: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 }
 
@@ -20,7 +30,8 @@ export class Board extends Component {
         firstClick: false,
         totalMines: 0,
         mineCounter: 0,
-        lostGame: false
+        endGame: false,
+        counter: 0
     };
 
     reset = () => {
@@ -29,7 +40,8 @@ export class Board extends Component {
             firstClick: false,
             totalMines: 0,
             mineCounter: 0,
-            lostGame: false
+            endGame: false,
+            counter: 0
         });
     };
 
@@ -47,7 +59,7 @@ export class Board extends Component {
                         value={item.value}
                         disabled={item.disabled}
                         click={item.click}
-                        lostGame={this.state.lostGame}
+                        endGame={this.state.endGame}
                     />
                 );
             });
@@ -166,6 +178,7 @@ export class Board extends Component {
         if (!this.state.firstClick) {
             this.setState({firstClick: true});
             data = this.findAdjacentMines(x, y, data);
+            this.incrementTimer();
         }
         this.clearArea(x, y, data);
         this.setState({boardData: data});
@@ -176,7 +189,7 @@ export class Board extends Component {
 
         if (tile.hasMine && !tile.flag) {
             data = this.revealMines();
-            this.setState({lostGame: true});
+            this.setState({endGame: true});
 
         } else if (!tile.click && !tile.flag) {
             tile.click = true;
@@ -291,19 +304,54 @@ export class Board extends Component {
                 }
             }
         }
-
+        clearInterval(this.test);
         return data;
     }
 
+    incrementTimer() {
+        let test = setInterval(() => {
+            if (this.state.endGame || !this.state.firstClick) {
+                clearInterval(test);
+                return;
+            }
+
+            if (this.state.counter <= 3600) {
+                this.setState({counter: this.state.counter + 1});
+            }
+        }, 1000);
+    }
+
+    timeFormat(time) {
+        if (time <= 0) {
+            return "00:00";
+
+        } else if (time > 0 && time < 60) {
+            if (time < 10) {
+                return "00:0" + time;
+            } else {
+                return "00:" + time;
+            }
+        } else if (time >= 60) {
+            let seconds = String(time % 60);
+            let minutes = String(Math.floor(time / 60));
+
+            if (minutes < 10) minutes = "0" + minutes;
+            if (seconds < 10) seconds = "0" + seconds;
+
+            return minutes + ":" + seconds;
+        }
+    }
+
     render() {
-        const {boardData} = this.state;
+        const {boardData, counter} = this.state;
 
         return(
             <div>
-                <div>
-                    MineCount: {this.state.mineCounter}
+                <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
+                <div style={styles.reset}>
+                    <button onClick={this.reset} style={styles.reset}>Reset</button>
                 </div>
-                <button onClick={this.reset}>Reset</button>
+                <div>{this.timeFormat(counter)}</div>
                 <div className={"board"} style={{padding: '100px'}}>
                     {this.displayBoard(boardData)}
                 </div>
