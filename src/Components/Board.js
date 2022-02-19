@@ -20,6 +20,11 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    timer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 }
 
@@ -344,14 +349,13 @@ export class Board extends Component {
 
     render() {
         const {boardData, counter} = this.state;
-
         return(
             <div>
                 <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
+                <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
                 <div style={styles.reset}>
                     <button onClick={this.reset} style={styles.reset}>Reset</button>
                 </div>
-                <div>{this.timeFormat(counter)}</div>
                 <div className={"board"} style={{padding: '100px'}}>
                     {this.displayBoard(boardData)}
                 </div>

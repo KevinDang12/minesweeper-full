@@ -9,7 +9,6 @@ class App extends Component {
     }
 
     render() {
-
         const {boardSize} = this.state;
         return (
             <div>
