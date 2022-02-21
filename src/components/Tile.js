@@ -1,17 +1,26 @@
 import React, {Component} from 'react';
-import one from '../1.png';
-import two from '../2.png';
-import three from '../3.png';
-import four from '../4.png';
-import five from '../5.png';
-import six from '../6.png';
-import seven from '../7.png';
-import eight from '../8.png';
-import mine from '../bomb.png';
-import flag from '../flag.png';
+import one from '../img/1.png';
+import two from '../img/2.png';
+import three from '../img/3.png';
+import four from '../img/4.png';
+import five from '../img/5.png';
+import six from '../img/6.png';
+import seven from '../img/7.png';
+import eight from '../img/8.png';
+import mine from '../img/bomb.png';
+import flag from '../img/flag.png';
 
+/**
+ * Tile Component to that make up the minesweeper board, it shows an image on the number of adjacent mines,
+ * a flag marker, a mine, or no image if there are no adjacent mines
+ */
 export class Tile extends Component {
 
+    /**
+     * Set the image of the tile for the number of adjacent mines,
+     * a flag indicator, or a mine if the game has ended
+     * @returns {null|*} Null if there are no adjacent mines, else a minesweeper image
+     */
     getImage() {
         const images = [one, two, three, four, five, six, seven, eight, mine, flag];
         const {value, click, endGame} = this.props;

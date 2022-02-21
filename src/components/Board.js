@@ -2,32 +2,48 @@ import React, {Component} from 'react';
 import {Tile} from './Tile';
 
 const styles = {
-    board: {
-        display: 'flex',
+    boardRow: {
         flexFlow: 'row wrap',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
+        justifyContent: 'flex-start',
+        display: 'flex',
     },
     counter: {
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent:'flex-end',
     },
+
     reset: {
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent:'flex-end',
     },
+
     timer: {
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
+        justifyContent:'flex-end',
+    },
+
+    board: {
+        paddingTop: '100px',
+        width: '60%',
+        justifyContent: 'flex-start',
+    },
+
+    menuBar: {
+        textAlign: 'center',
+        flexDirection: 'column',
+        display: 'flex',
+        justifyContent:'center',
+        width: '40%',
+        height: '50vh',
+        paddingRight: '20px'
+    },
 }
 
+/**
+ * The minesweeper board game that displays the tiles in the same number of rows and columns
+ */
 export class Board extends Component {
 
     state = {
@@ -39,6 +55,9 @@ export class Board extends Component {
         counter: 0
     };
 
+    /**
+     * Reset the minesweeper game
+     */
     reset = () => {
         this.setState({
             boardData: this.initTileProperties(this.props.boardSize),
@@ -50,6 +69,11 @@ export class Board extends Component {
         });
     };
 
+    /**
+     * Display the minesweeper game using the game data
+     * @param data Array of minesweeper tiles
+     * @returns {*[]} Minesweeper board arranged in the same number of rows and columns
+     */
     displayBoard(data) {
         let rows = [];
         let board = [];
@@ -68,13 +92,17 @@ export class Board extends Component {
                     />
                 );
             });
-            board.push(<div style={styles.board}>{rows}</div>);
+            board.push(<div style={styles.boardRow}>{rows}</div>);
             rows = [];
         });
-
         return board;
     };
 
+    /**
+     * Initiate the properties of each Tile component
+     * @param size The rows and columns of the board
+     * @returns {*[]} Board data of the rows and columns
+     */
     initTileProperties(size) {
         let tileProps = [];
 
@@ -97,6 +125,13 @@ export class Board extends Component {
         return tileProps;
     }
 
+    /**
+     * Check for the number of adjacent mines on a tile
+     * @param tileX X coordinate of the tile
+     * @param tileY Y coordinate of the tile
+     * @param data board data of the tiles in the game
+     * @returns {*} Updated data with the number of adjacent mines
+     */
     findAdjacentMines(tileX, tileY, data) {
         const size = this.props.boardSize;
 
@@ -134,6 +169,11 @@ export class Board extends Component {
         return data;
     }
 
+    /**
+     * Gather the adjacent tiles
+     * @param tile The current tile to check for adjacent mines
+     * @returns {*[]} The adjacent tiles
+     */
     checkAdjacent(tile) {
         const size = this.props.boardSize;
         let data = this.state.boardData;
@@ -167,6 +207,11 @@ export class Board extends Component {
         return adjacent;
     }
 
+    /**
+     * Find the number of tiles that has a Mine
+     * @param adjacent List of adjacent tiles
+     * @returns {number} Number of adjacent tiles with a Mine
+     */
     numOfAdjacentMines(adjacent) {
         let count = 0;
         for (const tile of adjacent) {
@@ -177,6 +222,11 @@ export class Board extends Component {
         return count;
     }
 
+    /**
+     * Left mouse click, start the game timer on first click and open the selected tile
+     * @param x X coordinate of the selected tile
+     * @param y Y coordinate of the selected tile
+     */
     onClick(x, y) {
         let data = this.state.boardData;
 
@@ -189,6 +239,14 @@ export class Board extends Component {
         this.setState({boardData: data});
     }
 
+    /**
+     * If the user click on a mine, the game will end, if a tile is not flagged or clicked, the selected tile,
+     * and the adjacent tiles will be opened on the board
+     * @param x X-coordinates of the selected tile
+     * @param y Y-coordinates of the selected tile
+     * @param data Board game data to update
+     * @returns {*[]} Updated board game data
+     */
     clearArea(x, y, data) {
         let tile = data[x][y];
 
@@ -211,12 +269,18 @@ export class Board extends Component {
 
         const count = this.state.mineCounter;
         if (count === 0) {
-            data = this.endGame(data, count);
+            data = this.winGame(data, count);
         }
 
         return data;
     }
 
+    /**
+     * Overwrites the default right mouse click, adds a flag on a tile if it has not yet been selected by the user
+     * @param e Mouse event to prevent menu from appearing on the tile
+     * @param x X-coordinates of the selected tile
+     * @param y Y-coordinates of the selected tile
+     */
     onContextMenu(e, x, y) {
         e.preventDefault();
 
@@ -245,7 +309,7 @@ export class Board extends Component {
             }
 
             if (count === 0) {
-                data = this.endGame(data, count);
+                data = this.winGame(data, count);
             }
 
             this.setState({mineCounter: count});
@@ -253,6 +317,11 @@ export class Board extends Component {
         }
     }
 
+    /**
+     * Reveal the location of the mines that the user did not find, the correct tiles flagged containing a mine,
+     * and the incorrect tiles flagged not containing a mine.
+     * @returns {*[]} Board game data with the correct and incorrect mine locations
+     */
     revealMines() {
         const size = this.props.boardSize;
         let data = this.state.boardData;
@@ -278,6 +347,13 @@ export class Board extends Component {
         return data;
     }
 
+    /**
+     * Check the entire minesweeper board on whether the user open all the tiles and flagged the tiles containing
+     * the mines
+     * @param count Number of mines left on the board
+     * @returns {boolean} True if the all tiles are opened and mines are flagged,
+     * else False if there are still tiles not opened and mines are not flagged
+     */
     checkWin(count) {
         const size = this.props.boardSize;
         let data = this.state.boardData;
@@ -289,13 +365,18 @@ export class Board extends Component {
                     if ((!tile.hasMine && !tile.click) || (tile.hasMine && !tile.flag)) return false;
                 }
             }
-
             return true;
         }
         return false;
     }
 
-    endGame(data, count) {
+    /**
+     * End the game if all the tiles with mines are found and the tiles are opened, the game timer will stop
+     * @param data Board game data to update
+     * @param count Number of mines left on the board
+     * @returns {*} The board game data with its tiles disabled
+     */
+    winGame(data, count) {
         const size = this.props.boardSize;
 
         if (this.checkWin(count) === true) {
@@ -309,14 +390,17 @@ export class Board extends Component {
                 }
             }
         }
-        clearInterval(this.test);
+        clearInterval(this.timer);
         return data;
     }
 
+    /**
+     * Start the game timer after the user clicks on the first tile on the minesweeper board
+     */
     incrementTimer() {
-        let test = setInterval(() => {
+        let timer = setInterval(() => {
             if (this.state.endGame || !this.state.firstClick) {
-                clearInterval(test);
+                clearInterval(timer);
                 return;
             }
 
@@ -326,6 +410,11 @@ export class Board extends Component {
         }, 1000);
     }
 
+    /**
+     * Set the format of the timer into mm:ss
+     * @param time The number of seconds that has passed
+     * @returns {string} String format of the timer
+     */
     timeFormat(time) {
         if (time <= 0) {
             return "00:00";
@@ -350,13 +439,17 @@ export class Board extends Component {
     render() {
         const {boardData, counter} = this.state;
         return(
-            <div>
-                <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
-                <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
-                <div style={styles.reset}>
-                    <button onClick={this.reset} style={styles.reset}>Reset</button>
+            <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+
+                <div style={styles.menuBar}>
+                    <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
+                    <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
+                    <div style={styles.reset}>
+                        <button onClick={this.reset} style={styles.reset}>Reset</button>
+                    </div>
                 </div>
-                <div className={"board"} style={{padding: '100px'}}>
+
+                <div className={"board"} style={styles.board}>
                     {this.displayBoard(boardData)}
                 </div>
             </div>
