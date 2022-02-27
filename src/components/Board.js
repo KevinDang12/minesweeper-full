@@ -14,25 +14,27 @@ const styles = {
     counter: {
         display: 'flex',
         justifyContent:'flex-end',
+        fontSize: '25px',
+        margin: '5px',
     },
-
-    reset: {
-        display: 'flex',
-        justifyContent:'flex-end',
-    },
-
     timer: {
         display: 'flex',
         justifyContent:'flex-end',
+        fontSize: '25px',
+        margin: '5px',
     },
-
+    reset: {
+        display: 'flex',
+        justifyContent:'flex-end',
+        margin: '5px',
+    },
     board: {
-        paddingTop: '100px',
+        paddingTop: '250px',
         width: '60%',
         justifyContent: 'flex-start',
     },
-
     menuBar: {
+        paddingTop: '250px',
         textAlign: 'center',
         flexDirection: 'column',
         display: 'flex',
@@ -447,7 +449,7 @@ export class Board extends Component {
                     <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
                     <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
                     <div style={styles.reset}>
-                        <Button variant="outline-primary" size={"sm"} onClick={this.reset}>Reset</Button>
+                        <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
                     </div>
                 </div>
 
