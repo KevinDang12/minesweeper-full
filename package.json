@@ -1,6 +1,5 @@
 {
   "homepage": "https://kevindang12.github.io/minesweeper-website/",
-  "name": "minesweeper",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
