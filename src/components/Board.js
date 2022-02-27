@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Tile} from './Tile';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from 'react-bootstrap';
 
 const styles = {
     boardRow: {
@@ -445,7 +447,7 @@ export class Board extends Component {
                     <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
                     <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
                     <div style={styles.reset}>
-                        <button onClick={this.reset} style={styles.reset}>Reset</button>
+                        <Button variant="outline-primary" size={"sm"} onClick={this.reset}>Reset</Button>
                     </div>
                 </div>
 
