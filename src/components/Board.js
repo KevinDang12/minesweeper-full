@@ -5,9 +5,8 @@ import { Button } from 'react-bootstrap';
 
 const styles = {
     boardRow: {
-        flexFlow: 'row wrap',
+        flexFlow: 'row',
         flexDirection: 'row',
-        flexWrap: 'wrap',
         justifyContent: 'flex-start',
         display: 'flex',
     },
@@ -29,18 +28,15 @@ const styles = {
         margin: '5px',
     },
     board: {
-        paddingTop: '250px',
-        width: '60%',
-        justifyContent: 'flex-start',
+        paddingTop: '10vh',
     },
     menuBar: {
-        paddingTop: '250px',
+        paddingTop: '10vh',
         textAlign: 'center',
         flexDirection: 'column',
         display: 'flex',
         justifyContent:'center',
         width: '40%',
-        height: '50vh',
         paddingRight: '20px'
     },
 }
