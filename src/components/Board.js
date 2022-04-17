@@ -52,19 +52,21 @@ export class Board extends Component {
         totalMines: 0,
         mineCounter: 0,
         endGame: false,
-        counter: 0
+        counter: 0,
+        timer: null
     };
 
     /**
      * Reset the minesweeper game
      */
     reset = () => {
+        clearInterval(this.timer);
         this.setState({
             boardData: this.initTileProperties(this.props.boardSize),
             firstClick: false,
             totalMines: 0,
-            mineCounter: 0,
             endGame: false,
+            mineCounter: 0,
             counter: 0
         });
     };
@@ -365,6 +367,7 @@ export class Board extends Component {
                     if ((!tile.hasMine && !tile.click) || (tile.hasMine && !tile.flag)) return false;
                 }
             }
+            this.setState({endGame: true});
             return true;
         }
         return false;
@@ -390,7 +393,6 @@ export class Board extends Component {
                 }
             }
         }
-        clearInterval(this.timer);
         return data;
     }
 
@@ -398,9 +400,9 @@ export class Board extends Component {
      * Start the game timer after the user clicks on the first tile on the minesweeper board
      */
     incrementTimer() {
-        let timer = setInterval(() => {
+        this.timer = setInterval(() => {
             if (this.state.endGame || !this.state.firstClick) {
-                clearInterval(timer);
+                clearInterval(this.timer);
                 return;
             }
 
