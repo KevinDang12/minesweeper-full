@@ -88,6 +88,7 @@ export class Board extends Component {
 
         data.map(row => {
             row.map(item => {
+                // console.log(item);
                 rows.push(
                     <Tile
                         onClick={() => this.onClick(item.x, item.y)}
@@ -108,14 +109,27 @@ export class Board extends Component {
 
     pauseOrPlay = () => {
         let { paused } = this.state;
-        console.log(paused);
 
         if (paused === true) {
             this.setState({paused: false});
             this.incrementTimer();
         } else {
             this.setState({paused: true});
+            clearInterval(this.timer);
         }
+        this.boardPlay(paused);
+    }
+
+    boardPlay(paused) {
+        const { boardData } = this.state;
+
+        for (const row of boardData) {
+            for (const element of row) {
+                element.disabled = (!paused) ? true : false;
+            }
+        }
+
+        this.setState({boardData: boardData});
     }
 
     /**
@@ -419,7 +433,7 @@ export class Board extends Component {
      */
     incrementTimer() {
         this.timer = setInterval(() => {
-            if (this.state.endGame || !this.state.firstClick || this.state.paused) {
+            if (this.state.endGame || !this.state.firstClick) {
                 clearInterval(this.timer);
                 return;
             }
@@ -462,13 +476,13 @@ export class Board extends Component {
             <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
 
                 <div style={styles.menuBar}>
-                    <div style={styles.counter}>MineCount: {this.state.mineCounter}</div>
+                    <div style={styles.counter}>Mine Count: {this.state.mineCounter}</div>
                     <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
                     <div style={styles.reset}>
                         <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
                     </div>
                     <div style={styles.reset}>
-                        <Button variant="outline-primary" size={"lg"} onClick={this.pauseOrPlay}>{this.state.paused ? "Resume" : "Pause"}</Button>
+                        <Button variant="outline-primary" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
                     </div>
                 </div>
 
