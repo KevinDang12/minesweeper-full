@@ -7,15 +7,15 @@ app.use(cors());
 
 const boards = [
     {   id: 1,
-        name: "test",
         boardSize: 3,
-        firstClick: false,
-        totalMines: 0,
-        mineCounter: 0,
-        endGame: false,
         counter: 0,
-        timer: null,
+        endGame: false,
+        firstClick: false,
+        mineCounter: 0,
+        name: "test",
         paused: false,
+        timer: null,
+        totalMines: 0,
         boardData: [
             [{
                 adjacentMines: 0,
@@ -118,6 +118,78 @@ app.get('/', (req, res) => {
 
 app.get("/api/boards", (req, res) => {
     res.send(boards);
+});
+
+app.get('/api/boards/:id', (req, res) => {
+    const board = boards.find(b => b.id === parseInt(req.params.id));
+    if (!board) { // 404 object not found
+        res.status(404).send('The student with the given ID was not found.')
+    }
+    res.send(board);
+});
+
+app.post('/api/boards', (req, res) => {
+    const { error } = validateData(req.body);
+
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    const board = {
+        id: boards.length + 1,
+        boardSize: 3,
+        counter: req.body.counter,
+        endGame: req.body.endGame,
+        firstClick: req.body.firstClick,
+        mineCounter: req.body.mineCounter,
+        name: req.body.name,
+        paused: req.body.paused,
+        timer: req.body.timer,
+        totalMines: req.body.totalMines,
+        boardData: req.body.boardData
+    }
+
+    students.push(board);
+    res.send(board);
+});
+
+app.put('/api/boards/:id', (req, res) => {
+    const board = boards.find(b => b.id === parseInt(req.params.id));
+
+    if (!board) {
+        return res.status(404).send('The student with the given ID was not found.');
+    }
+
+    const { error } = validateData(req.body);
+
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    board = {
+        name: req.body.name,
+        studentID: req.body.studentID,
+        program: req.body.program,
+        semester: req.body.semester,
+        source: req.body.source,
+        courseCode: req.body.courseCode,
+        courseType: req.body.courseType,
+        topics: req.body.topics
+    }
+
+    res.send(board);
+});
+
+app.delete('/api/boards/:id', (req, res) => {
+    const board = boards.find(b => b.id === parseInt(req.params.id));
+    
+    if (!board) {
+        return res.status(404).send('The student with the given ID was not found.');
+    }
+
+    const index = boards.indexOf(board);
+    boards.splice(index, 1);
+    res.send(board);
 });
 
 const port = process.env.PORT || 5000;

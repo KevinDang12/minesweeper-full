@@ -20,7 +20,7 @@ class App extends Component {
                     <Header />
                     <Routes>
                         <Route exact path="/" element={<Board boardSize={boardSize}/>}/>
-                        <Route path="/newgame"/>
+                        {/* <Route path="/newgame"/> */}
                         <Route path="/save" element={<Save />}/>
                         <Route path="/load" element={<Load />}/>
                     </Routes>
