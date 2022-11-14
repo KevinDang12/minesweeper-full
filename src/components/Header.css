@@ -1,0 +1,44 @@
+.header {
+    background-color: rgb(247, 198, 2);
+    height: 4.5em;
+    line-height: 4em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.header>ul {
+    display: inline;
+    margin: 0;
+    list-style-type: none;
+}
+
+.header>ul>li {
+    display: inline;
+    margin-right: 1.5em;
+}
+
+.header>ul>li>a {
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: rgba(0, 0, 0, 0.8);
+    text-decoration: none;
+}
+
+.header>ul>li>a:hover {
+    color: white;
+}
+
+.header>ul>li.logo {
+    font-size: 2em;
+    color: rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+}
+
+.header-left {
+    justify-self: start;
+}
+
+.header-right {
+    justify-self: end;
+}

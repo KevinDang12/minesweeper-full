@@ -46,15 +46,20 @@ const styles = {
  */
 export class Board extends Component {
 
-    state = {
-        boardData: this.initTileProperties(this.props.boardSize),
-        firstClick: false,
-        totalMines: 0,
-        mineCounter: 0,
-        endGame: false,
-        counter: 0,
-        timer: null
-    };
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            boardData: this.initTileProperties(this.props.boardSize),
+            firstClick: false,
+            totalMines: 0,
+            mineCounter: 0,
+            endGame: false,
+            counter: 0,
+            timer: null,
+            paused: false
+        };
+    }
 
     /**
      * Reset the minesweeper game
@@ -67,7 +72,8 @@ export class Board extends Component {
             totalMines: 0,
             endGame: false,
             mineCounter: 0,
-            counter: 0
+            counter: 0,
+            paused: false
         });
     };
 
@@ -99,6 +105,18 @@ export class Board extends Component {
         });
         return board;
     };
+
+    pauseOrPlay = () => {
+        let { paused } = this.state;
+        console.log(paused);
+
+        if (paused === true) {
+            this.setState({paused: false});
+            this.incrementTimer();
+        } else {
+            this.setState({paused: true});
+        }
+    }
 
     /**
      * Initiate the properties of each Tile component
@@ -401,12 +419,12 @@ export class Board extends Component {
      */
     incrementTimer() {
         this.timer = setInterval(() => {
-            if (this.state.endGame || !this.state.firstClick) {
+            if (this.state.endGame || !this.state.firstClick || this.state.paused) {
                 clearInterval(this.timer);
                 return;
             }
 
-            if (this.state.counter <= 3600) {
+            if (this.state.counter <= 3600 && !this.state.paused) {
                 this.setState({counter: this.state.counter + 1});
             }
         }, 1000);
@@ -448,6 +466,9 @@ export class Board extends Component {
                     <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
                     <div style={styles.reset}>
                         <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
+                    </div>
+                    <div style={styles.reset}>
+                        <Button variant="outline-primary" size={"lg"} onClick={this.pauseOrPlay}>{this.state.paused ? "Resume" : "Pause"}</Button>
                     </div>
                 </div>
 
