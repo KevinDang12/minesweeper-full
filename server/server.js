@@ -1,4 +1,5 @@
 const express = require('express');
+const Joi = require("joi");
 const app = express();
 const cors = require('cors');
 
@@ -14,7 +15,7 @@ const boards = [
         mineCounter: 0,
         name: "test",
         paused: false,
-        timer: null,
+        counter: 0,
         totalMines: 0,
         boardData: [
             [{
@@ -112,6 +113,23 @@ const boards = [
     }
 ];
 
+function validateData(detail) {
+    const schema = {
+        boardSize: Joi.number(),
+        counter: Joi.number(),
+        endGame: Joi.boolean(),
+        firstClick: Joi.boolean(),
+        mineCounter: Joi.number(),
+        name: Joi.string(),
+        paused: Joi.boolean(),
+        counter: Joi.number(),
+        totalMines: Joi.number(),
+        boardData: []
+    }
+
+    return Joi.validate(detail, schema);
+}
+
 app.get('/', (req, res) => {
     res.send('You can access the Minesweeper server by going to the /api/boards directory');
 });
@@ -129,27 +147,27 @@ app.get('/api/boards/:id', (req, res) => {
 });
 
 app.post('/api/boards', (req, res) => {
-    const { error } = validateData(req.body);
+    // const { error } = validateData(req.body);
 
-    if (error) {
-        return res.status(400).send(error.details[0].message);
-    }
+    // if (error) {
+    //     return res.status(400).send(error.details[0].message);
+    // }
 
     const board = {
         id: boards.length + 1,
-        boardSize: 3,
+        boardSize: req.body.boardSize,
         counter: req.body.counter,
         endGame: req.body.endGame,
         firstClick: req.body.firstClick,
         mineCounter: req.body.mineCounter,
         name: req.body.name,
         paused: req.body.paused,
-        timer: req.body.timer,
+        counter: req.body.counter,
         totalMines: req.body.totalMines,
         boardData: req.body.boardData
     }
 
-    students.push(board);
+    boards.push(board);
     res.send(board);
 });
 

@@ -48,17 +48,17 @@ export class Board extends Component {
 
     constructor(props) {
         super(props);
-
+        
         this.state = {
             boardData: this.initTileProperties(this.props.boardSize),
-            firstClick: false,
-            totalMines: 0,
-            mineCounter: 0,
-            endGame: false,
-            counter: 0,
-            timer: null,
-            paused: false
-        };
+            firstClick: this.props.firstClick,
+            totalMines: this.props.totalMines,
+            mineCounter: this.props.mineCounter,
+            endGame: this.props.endGame,
+            counter: this.props.counter,
+            timer: this.props.timer,
+            paused: this.props.paused
+        }
     }
 
     /**
@@ -120,6 +120,10 @@ export class Board extends Component {
         this.boardPlay(paused);
     }
 
+    /**
+     * Disable or enable board if the game is paused or not
+     * @param {*} paused 
+     */
     boardPlay(paused) {
         const { boardData } = this.state;
 
@@ -482,8 +486,11 @@ export class Board extends Component {
                         <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
                     </div>
                     <div style={styles.reset}>
-                        <Button variant="outline-primary" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
+                        <Button variant="danger" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
                     </div>
+                    {/* <div style={styles.reset}>
+                        <Button variant="info" size={"lg"}  disabled={this.state.endGame || !this.state.firstClick}>Save</Button>
+                    </div> */}
                 </div>
 
                 <div className={"board"} style={styles.board}>

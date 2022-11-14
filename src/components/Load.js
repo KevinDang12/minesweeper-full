@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
-})
+});
 
 /**
  * Get the list of Boards
@@ -44,15 +44,21 @@ class Load extends Component {
                     <tr>
                         <th>Name</th>
                         <th>Board Size</th>
-                        <th>Mine Count</th>
+                        <th>Total Number of Mine</th>
+                        <th>Number of Mines Remaining</th>
                         <th>Time</th>
+                        <th>Delete</th>
+                        <th>Load</th>
                     </tr>
                     {boards.map(board => 
                         <tr key={board.x + " " + board.y}>
                             <td>{board.name}</td>
                             <td>{board.boardSize}</td>
+                            <td>{board.totalMines}</td>
                             <td>{board.mineCounter}</td>
-                            <td>{(!board.timer) ? 0 : board.timer}</td>
+                            <td>{board.counter}</td>
+                            <td><button>X</button></td>
+                            <td><button>+</button></td>
                         </tr>
                     )}
                 </table>
