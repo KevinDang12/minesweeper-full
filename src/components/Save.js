@@ -99,7 +99,7 @@ class Save extends Component {
                         <Form.Label>Your board length: {boardSize}</Form.Label>
                     </Form.Group>
 
-                    <Button variant="outline-primary" size={"lg"} onClick={this.save}>Save</Button>
+                    <Button variant="warning" size={"lg"} onClick={this.save}>Save</Button>
                 </Form>
             </div>
         );

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Tile} from './Tile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
+import Save from './Save';
 
 const styles = {
     boardRow: {
@@ -44,20 +45,21 @@ const styles = {
 /**
  * The minesweeper board game that displays the tiles in the same number of rows and columns
  */
-export class Board extends Component {
+class Board extends Component {
 
     constructor(props) {
         super(props);
         
         this.state = {
             boardData: this.initTileProperties(this.props.boardSize),
-            firstClick: this.props.firstClick,
-            totalMines: this.props.totalMines,
-            mineCounter: this.props.mineCounter,
-            endGame: this.props.endGame,
-            counter: this.props.counter,
-            timer: this.props.timer,
-            paused: this.props.paused
+            firstClick: false,
+            totalMines: 0,
+            mineCounter: 0,
+            endGame: false,
+            counter: 0,
+            timer: null,
+            paused: false,
+            saved: false
         }
     }
 
@@ -73,9 +75,18 @@ export class Board extends Component {
             endGame: false,
             mineCounter: 0,
             counter: 0,
-            paused: false
+            paused: false,
+            saved: false
         });
     };
+
+    save = () => {
+        if (!this.state.saved) {
+            this.setState({saved: true});
+        } else {
+            this.setState({saved: false});
+        }
+    }
 
     /**
      * Display the minesweeper game using the game data
@@ -475,28 +486,43 @@ export class Board extends Component {
     }
 
     render() {
-        const {boardData, counter} = this.state;
-        return(
-            <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+        const {boardData, counter, saved} = this.state;
 
-                <div style={styles.menuBar}>
-                    <div style={styles.counter}>Mine Count: {this.state.mineCounter}</div>
-                    <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
-                    <div style={styles.reset}>
-                        <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
-                    </div>
-                    <div style={styles.reset}>
-                        <Button variant="danger" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
-                    </div>
-                    {/* <div style={styles.reset}>
-                        <Button variant="info" size={"lg"}  disabled={this.state.endGame || !this.state.firstClick}>Save</Button>
-                    </div> */}
-                </div>
+        let content = '';
 
-                <div className={"board"} style={styles.board}>
-                    {this.displayBoard(boardData)}
-                </div>
+        if (!saved) {
+            content = (<div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+                        <div style={styles.menuBar}>
+                            <div style={styles.counter}>Mine Count: {this.state.mineCounter}</div>
+                            <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
+                            <div style={styles.reset}>
+                                <Button variant="outline-primary" size={"lg"} onClick={this.reset} disabled={!this.state.firstClick}>Reset</Button>
+                            </div>
+                            <div style={styles.reset}>
+                                <Button variant="danger" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
+                            </div>
+                            <div style={styles.reset}>
+                                <Button variant="info" size={"lg"} onClick={this.save} disabled={this.state.endGame || !this.state.firstClick}>Save</Button>
+                            </div>
+                        </div>
+
+                        <div className={"board"} style={styles.board}>
+                            {this.displayBoard(boardData)}
+                        </div>
+                    </div>)
+        } else {
+            content = (<div align="center">
+                        <Save />
+                        <Button variant="secondary" size={"lg"} onClick={this.save}>Back</Button>
+                    </div>);
+        }
+
+        return (
+            <div>
+                {content}
             </div>
         );
     }
 }
+
+export default Board;
