@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Tile} from './Tile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
+import Save from './Save';
 
 const styles = {
     boardRow: {
@@ -51,13 +52,14 @@ export class Board extends Component {
         
         this.state = {
             boardData: this.initTileProperties(this.props.boardSize),
-            firstClick: this.props.firstClick,
-            totalMines: this.props.totalMines,
-            mineCounter: this.props.mineCounter,
-            endGame: this.props.endGame,
-            counter: this.props.counter,
-            timer: this.props.timer,
-            paused: this.props.paused
+            firstClick: false,
+            totalMines: 0,
+            mineCounter: 0,
+            endGame: false,
+            counter: 0,
+            timer: null,
+            paused: false,
+            saved: false
         }
     }
 
@@ -73,9 +75,28 @@ export class Board extends Component {
             endGame: false,
             mineCounter: 0,
             counter: 0,
-            paused: false
+            paused: false,
+            saved: false
         });
     };
+
+    saveRequest() {
+        const {saved, paused} = this.state;
+
+        if (saved === true) {
+            this.setState({paused: false});
+            this.incrementTimer();
+            this.setState({saved: false});
+            
+        } else {
+            this.setState({paused: true});
+            clearInterval(this.timer);
+            this.setState({saved: true});
+        }
+        
+        console.log(saved);
+        console.log(paused);
+    }
 
     /**
      * Display the minesweeper game using the game data
@@ -91,8 +112,8 @@ export class Board extends Component {
                 // console.log(item);
                 rows.push(
                     <Tile
-                        onClick={() => this.onClick(item.x, item.y)}
-                        onContextMenu={(e) => this.onContextMenu(e, item.x, item.y)}
+                        onLeftClick={() => this.onClick(item.x, item.y)}
+                        onRightClick={(e) => this.onContextMenu(e, item.x, item.y)}
                         color={item.color}
                         value={item.value}
                         disabled={item.disabled}
@@ -475,27 +496,47 @@ export class Board extends Component {
     }
 
     render() {
-        const {boardData, counter} = this.state;
+        const { boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, boardSize} = this.state;
         return(
-            <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+            <div>
+                {(saved) ?
+                    <div>
+                        <Save 
+                            onClick={() => this.saveRequest()}
+                            boardData={boardData}
+                            boardSize={this.props.boardSize}
+                            firstClick={firstClick}
+                            totalMines={totalMines}
+                            mineCounter={mineCounter}
+                            endGame={endGame}
+                            counter={counter}
+                            timer={timer}
+                            paused={paused}
+                            saved={saved}
+                         />
+                        {/* <Button variant="info" size={"lg"} onClick={this.save} disabled={this.state.endGame || !this.state.firstClick}>Save</Button> */}
+                    </div> 
+                    : 
+                    <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+                        <div style={styles.menuBar}>
+                            <div style={styles.counter}>Mine Count: {this.state.mineCounter}</div>
+                            <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
+                            <div style={styles.reset}>
+                                <Button variant="outline-primary" size={"lg"} disabled={!this.state.firstClick} onClick={this.reset}>Reset</Button>
+                            </div>
+                            <div style={styles.reset}>
+                                <Button variant="danger" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
+                            </div>
+                            <div style={styles.reset}>
+                                <Button variant="info" size={"lg"} onClick={() => this.saveRequest()} disabled={this.state.endGame || !this.state.firstClick}>Save</Button>
+                            </div>
+                        </div>
 
-                <div style={styles.menuBar}>
-                    <div style={styles.counter}>Mine Count: {this.state.mineCounter}</div>
-                    <div style={styles.timer}>Time: {this.timeFormat(counter)}</div>
-                    <div style={styles.reset}>
-                        <Button variant="outline-primary" size={"lg"} onClick={this.reset}>Reset</Button>
+                        <div className={"board"} style={styles.board}>
+                            {this.displayBoard(boardData)}
+                        </div>
                     </div>
-                    <div style={styles.reset}>
-                        <Button variant="danger" size={"lg"} onClick={this.pauseOrPlay} disabled={this.state.endGame || !this.state.firstClick}>{this.state.paused ? "Resume" : "Pause"}</Button>
-                    </div>
-                    {/* <div style={styles.reset}>
-                        <Button variant="info" size={"lg"}  disabled={this.state.endGame || !this.state.firstClick}>Save</Button>
-                    </div> */}
-                </div>
-
-                <div className={"board"} style={styles.board}>
-                    {this.displayBoard(boardData)}
-                </div>
+                }
             </div>
         );
     }

@@ -11,7 +11,7 @@ function Header() {
 
             <ul className="header-right">
                 {/* <li><Link to="/newgame">New Game</Link></li> */}
-                <li><Link to="/save">Save</Link></li>
+                {/* <li><Link to="/save">Save</Link></li> */}
                 <li><Link to="/load">Load</Link></li>
             </ul>
         </div>

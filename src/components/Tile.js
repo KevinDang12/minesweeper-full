@@ -43,14 +43,14 @@ export class Tile extends Component {
         return(
             <button
                 className={"tile"}
-                onContextMenu={this.props.onContextMenu}
+                onContextMenu={this.props.onRightClick}
                 style={{
                     height: '50px',
                     width: '50px',
                     backgroundColor: color,
                     margin: '0.5px'}}
                 disabled={this.props.disabled}
-                onClick={this.props.onClick}>
+                onClick={this.props.onLeftClick}>
                 <img src={this.getImage()}/>
             </button>
         );

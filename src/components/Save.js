@@ -11,19 +11,9 @@ class Save extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             name: "",
-            mineCounter: this.props.mineCounter,
-            counter: this.props.counter,
-            boardSize: this.props.boardSize,
-            boardData: this.props.boardData,
-            firstClick: this.props.firstClick,
-            totalMines: this.props.totalMines,
-            mineCounter: this.props.mineCounter,
-            endGame: this.props.endGame,
-            counter: this.props.counter,
-            timer: this.props.timer,
-            paused: this.props.paused
         }
 
         this.getNameValue = this.getNameValue.bind(this);
@@ -43,17 +33,15 @@ class Save extends Component {
 
         const text = {
             name: this.state.name,
-            mineCounter: this.state.mineCounter,
-            counter: this.state.counter,
-            boardSize: this.state.boardSize,
-            boardData: this.state.boardData,
-            firstClick: this.state.firstClick,
-            totalMines: this.state.totalMines,
-            mineCounter: this.state.mineCounter,
-            endGame: this.state.endGame,
-            counter: this.state.counter,
-            timer: this.state.timer,
-            paused: this.state.paused
+            mineCounter: this.props.mineCounter,
+            counter: this.props.counter,
+            boardSize: this.props.boardSize,
+            boardData: this.props.boardData,
+            firstClick: this.props.firstClick,
+            totalMines: this.props.totalMines,
+            endGame: this.props.endGame,
+            timer: this.props.timer,
+            paused: this.props.paused
         }
 
         console.log(text);
@@ -76,7 +64,7 @@ class Save extends Component {
     };
     
     render() {
-        const { mineCounter, counter, boardSize } = this.state;
+        const { mineCounter, counter, boardSize } = this.props;
         return (
             <div align="center">
                 {/* <h1>Save File Name, Mine Count, Time, Board Size</h1> */}
@@ -100,6 +88,7 @@ class Save extends Component {
                     </Form.Group>
 
                     <Button variant="outline-primary" size={"lg"} onClick={this.save}>Save</Button>
+                    <Button variant="info" size={"lg"} onClick={this.props.onClick}>Back</Button>
                 </Form>
             </div>
         );

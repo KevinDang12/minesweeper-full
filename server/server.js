@@ -178,22 +178,22 @@ app.put('/api/boards/:id', (req, res) => {
         return res.status(404).send('The student with the given ID was not found.');
     }
 
-    const { error } = validateData(req.body);
+    // const { error } = validateData(req.body);
 
-    if (error) {
-        return res.status(400).send(error.details[0].message);
-    }
+    // if (error) {
+    //     return res.status(400).send(error.details[0].message);
+    // }
 
-    board = {
-        name: req.body.name,
-        studentID: req.body.studentID,
-        program: req.body.program,
-        semester: req.body.semester,
-        source: req.body.source,
-        courseCode: req.body.courseCode,
-        courseType: req.body.courseType,
-        topics: req.body.topics
-    }
+    board.boardSize = req.body.boardSize;
+    board.counter = req.body.counter;
+    board.endGame = req.body.endGame;
+    board.firstClick = req.body.firstClick;
+    board.mineCounter = req.body.mineCounter;
+    board.name = req.body.name;
+    board.paused = req.body.paused;
+    board.counter = req.body.counter;
+    board.totalMines = req.body.totalMines;
+    board.boardData = req.body.boardData;
 
     res.send(board);
 });
