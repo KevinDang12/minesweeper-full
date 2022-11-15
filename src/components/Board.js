@@ -45,7 +45,7 @@ const styles = {
 /**
  * The minesweeper board game that displays the tiles in the same number of rows and columns
  */
-export class Board extends Component {
+class Board extends Component {
 
     constructor(props) {
         super(props);
@@ -541,3 +541,5 @@ export class Board extends Component {
         );
     }
 }
+
+export default Board;
