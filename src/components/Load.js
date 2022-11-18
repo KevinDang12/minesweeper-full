@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { timeFormat } from '../GameLogic.js'
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -56,7 +57,7 @@ class Load extends Component {
                             <td>{board.boardSize}</td>
                             <td>{board.totalMines}</td>
                             <td>{board.mineCounter}</td>
-                            <td>{board.counter}</td>
+                            <td>{timeFormat(board.counter)}</td>
                             <td><button>X</button></td>
                             <td><button>+</button></td>
                         </tr>

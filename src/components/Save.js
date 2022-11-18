@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import './Save.css';
 import axios from 'axios';
+import { timeFormat } from '../GameLogic.js'
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -80,15 +81,15 @@ class Save extends Component {
                     </Form.Group>
 
                     <Form.Group className='form'>
-                        <Form.Label>Your total time: {counter}</Form.Label>
+                        <Form.Label>Your total time: {timeFormat(counter)}</Form.Label>
                     </Form.Group>
 
                     <Form.Group className='form'>
                         <Form.Label>Your board length: {boardSize}</Form.Label>
                     </Form.Group>
 
-                    <Button variant="outline-primary" size={"lg"} onClick={this.save}>Save</Button>
-                    <Button variant="info" size={"lg"} onClick={this.props.onClick}>Back</Button>
+                    <Button variant="success" size={"lg"} onClick={this.save}>Save</Button>
+                    <Button variant="danger" size={"lg"} onClick={this.props.onClick}>Back</Button>
                 </Form>
             </div>
         );

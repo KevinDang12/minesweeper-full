@@ -6,7 +6,7 @@ function Header() {
     return(
         <div className="header">
             <ul className="header-left">
-                <li className="logo"><Link to="/">Minesweeper</Link></li>
+                <li className="logo"><Link to="/minesweeper-full">Minesweeper</Link></li>
             </ul>
 
             <ul className="header-right">

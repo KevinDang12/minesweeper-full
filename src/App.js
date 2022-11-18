@@ -19,8 +19,7 @@ class App extends Component {
                 <div>
                     <Header />
                     <Routes>
-                        <Route exact path="/" element={<Board boardSize={boardSize} />}/>
-                        {/* <Route path="/newgame"/> */}
+                        <Route exact path="/minesweeper-full" element={<Board boardSize={boardSize} />}/>
                         <Route path="/load" element={<Load />}/>
                     </Routes>
                 </div>

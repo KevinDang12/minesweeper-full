@@ -14,7 +14,7 @@ import flag from '../img/flag.png';
  * Tile Component to that make up the minesweeper board, it shows an image on the number of adjacent mines,
  * a flag marker, a mine, or no image if there are no adjacent mines
  */
-export class Tile extends Component {
+class Tile extends Component {
 
     /**
      * Set the image of the tile for the number of adjacent mines,
@@ -56,3 +56,5 @@ export class Tile extends Component {
         );
     }
 }
+
+export default Tile;
