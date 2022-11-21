@@ -68,7 +68,6 @@ class Save extends Component {
         const { mineCounter, counter, boardSize } = this.props;
         return (
             <div align="center">
-                {/* <h1>Save File Name, Mine Count, Time, Board Size</h1> */}
                 <br/>
                 <Form>
                     <Form.Group className='form'>

@@ -35,6 +35,16 @@ class Load extends Component {
         }
     }
 
+    deleteBoard = async(id) => {
+        try {
+            let data = await api.delete(`/${id}`);
+            console.log(data);
+            this.getBoards();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     render() {
         const { boards } = this.state;
         return (
@@ -58,7 +68,7 @@ class Load extends Component {
                             <td>{board.totalMines}</td>
                             <td>{board.mineCounter}</td>
                             <td>{timeFormat(board.counter)}</td>
-                            <td><button>X</button></td>
+                            <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
                             <td><button>+</button></td>
                         </tr>
                     )}

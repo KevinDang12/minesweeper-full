@@ -17,9 +17,11 @@ app.get("/api/boards", (req, res) => {
 
 app.get('/api/boards/:id', (req, res) => {
     const board = boards.find(b => b.id === parseInt(req.params.id));
+
     if (!board) { // 404 object not found
-        res.status(404).send('The student with the given ID was not found.')
+        res.status(404).send('The board with the given ID was not found.');
     }
+
     res.send(board);
 });
 
@@ -52,7 +54,7 @@ app.put('/api/boards/:id', (req, res) => {
     const board = boards.find(b => b.id === parseInt(req.params.id));
 
     if (!board) {
-        return res.status(404).send('The student with the given ID was not found.');
+        return res.status(404).send('The board with the given ID was not found.');
     }
 
     // const { error } = validateData(req.body);
@@ -77,9 +79,9 @@ app.put('/api/boards/:id', (req, res) => {
 
 app.delete('/api/boards/:id', (req, res) => {
     const board = boards.find(b => b.id === parseInt(req.params.id));
-    
-    if (!board) {
-        return res.status(404).send('The student with the given ID was not found.');
+
+    if (!board) { // 404 object not found
+        res.status(404).send('The board with the given ID was not found.');
     }
 
     const index = boards.indexOf(board);
