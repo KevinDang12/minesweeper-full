@@ -20,6 +20,7 @@ class App extends Component {
                     <Header />
                     <Routes>
                         <Route exact path="/minesweeper-full" element={<Board boardSize={boardSize} />}/>
+                        <Route exact path="/minesweeper-full/:id" element={<Board boardSize={boardSize} />}/>
                         <Route path="/load" element={<Load />}/>
                     </Routes>
                 </div>

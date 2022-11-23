@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { timeFormat } from '../GameLogic.js'
+import { Link } from 'react-router-dom';
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -69,7 +70,9 @@ class Load extends Component {
                             <td>{board.mineCounter}</td>
                             <td>{timeFormat(board.counter)}</td>
                             <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
-                            <td><button>+</button></td>
+                            <td>
+                                <Link to={"/minesweeper-full/" + board.id}>+</Link>
+                            </td>
                         </tr>
                     )}
                 </table>

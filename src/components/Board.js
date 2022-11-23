@@ -3,7 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Tile from './Tile';
 import Save from './Save';
 import Game from './Game';
+import { withRouter } from '../GameLogic.js';
 import { initTileProperties, checkAdjacent, numOfAdjacentMines, revealMines } from '../GameLogic.js'
+import axios from 'axios';
 
 const styles = {
     boardRow: {
@@ -14,14 +16,23 @@ const styles = {
     }
 }
 
+const api = axios.create({
+    baseURL: `http://localhost:5000/api/boards`
+});
+
 /**
  * The minesweeper board game that displays the tiles in the same number of rows and columns
  */
 class Board extends Component {
 
     constructor(props) {
+
         super(props);
+
+        let {id} = this.props.params;
+
         this.state = {
+            id: id,
             boardData: initTileProperties(this.props.boardSize),
             firstClick: false,
             totalMines: 0,
@@ -32,6 +43,38 @@ class Board extends Component {
             paused: false,
             saved: false
         }
+    }
+
+    /**
+     * ComponentDidMount where a board id was found,
+     * set the state to the game board data
+     */
+     componentDidMount() {
+        if (!this.state.id) {
+            return;
+        }
+
+        api.get('/' + this.state.id)
+            .then(result => {
+                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, paused, saved } = result.data;
+                
+                this.setState({
+                    boardData: boardData,
+                    firstClick: firstClick,
+                    totalMines: totalMines,
+                    mineCounter: mineCounter,
+                    endGame: endGame,
+                    counter: counter,
+                    timer: timer,
+                    paused: paused,
+                    saved: saved
+                });
+
+                console.log(result);
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     /**
@@ -375,4 +418,4 @@ class Board extends Component {
     }
 }
 
-export default Board;
+export default withRouter(Board);
