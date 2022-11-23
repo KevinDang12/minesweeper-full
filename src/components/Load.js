@@ -26,6 +26,9 @@ class Load extends Component {
         this.getBoards();
     }
 
+    /**
+     * Get the list of boards saved on the backend server
+     */
     getBoards = async() => {
         try {
             let data = await api.get('/').then(({data}) => data);
@@ -36,6 +39,10 @@ class Load extends Component {
         }
     }
 
+    /**
+     * Delete the board from the backend server using the id
+     * @param {*} id The id of the board stored on the backend server
+     */
     deleteBoard = async(id) => {
         try {
             let data = await api.delete(`/${id}`);

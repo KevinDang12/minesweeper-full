@@ -30,10 +30,12 @@ class Board extends Component {
         super(props);
 
         let {id} = this.props.params;
+        const size = 8;
 
         this.state = {
             id: id,
-            boardData: initTileProperties(this.props.boardSize),
+            boardSize: size,
+            boardData: initTileProperties(size),
             firstClick: false,
             totalMines: 0,
             mineCounter: 0,
@@ -41,7 +43,19 @@ class Board extends Component {
             counter: 0,
             timer: null,
             paused: false,
-            saved: false
+            saved: false,
+            refresh: true
+        }
+    }
+
+    /**
+     * When the component updates, reset the board
+     * if the pathname is "/minesweeper-full"
+     */
+    componentDidUpdate() {
+        if (this.props.location.pathname == "/minesweeper-full" && this.state.refresh) {
+            this.reset();
+            this.setState({refresh: false});
         }
     }
 
@@ -51,6 +65,7 @@ class Board extends Component {
      */
      componentDidMount() {
         if (!this.state.id) {
+            this.setState({refresh: true})
             return;
         }
 
@@ -69,8 +84,6 @@ class Board extends Component {
                     paused: paused,
                     saved: saved
                 });
-
-                console.log(result);
             })
             .catch(error => {
                 console.log(error);
@@ -83,7 +96,7 @@ class Board extends Component {
     reset() {
         clearInterval(this.timer);
         this.setState({
-            boardData: initTileProperties(this.props.boardSize),
+            boardData: initTileProperties(this.state.boardSize),
             firstClick: false,
             totalMines: 0,
             endGame: false,
@@ -184,7 +197,7 @@ class Board extends Component {
      * @returns {*} Updated data with the number of adjacent mines
      */
     findAdjacentMines(tileX, tileY, data) {
-        const size = this.props.boardSize;
+        const size = this.state.boardSize;
 
         data[tileX][tileY].hasMine = false;
 
@@ -203,7 +216,7 @@ class Board extends Component {
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
                 let tile = data[x][y];
-                tile.adjacentMines = numOfAdjacentMines(checkAdjacent(tile, this.props.boardSize, this.state.boardData));
+                tile.adjacentMines = numOfAdjacentMines(checkAdjacent(tile, this.state.boardSize, this.state.boardData));
 
                 if (tile.hasMine) {
                     tile.value = "X";
@@ -250,7 +263,7 @@ class Board extends Component {
         let tile = data[x][y];
 
         if (tile.hasMine && !tile.flag) {
-            data = revealMines(this.props.boardSize, this.state.boardData);
+            data = revealMines(this.state.boardSize, this.state.boardData);
             this.setState({endGame: true});
 
         } else if (!tile.click && !tile.flag) {
@@ -259,7 +272,7 @@ class Board extends Component {
             tile.color = 'rgb(255,255,255)';
 
             if (tile.adjacentMines === 0) {
-                let adjacent = checkAdjacent(tile, this.props.boardSize, this.state.boardData);
+                let adjacent = checkAdjacent(tile, this.state.boardSize, this.state.boardData);
                 for (const value of adjacent) {
                     this.clearArea(value.x, value.y, data);
                 }
@@ -324,7 +337,7 @@ class Board extends Component {
      * else False if there are still tiles not opened and mines are not flagged
      */
     checkWin(count) {
-        const size = this.props.boardSize;
+        const size = this.state.boardSize;
         let data = this.state.boardData;
 
         if (count === 0) {
@@ -347,7 +360,7 @@ class Board extends Component {
      * @returns {*} The board game data with its tiles disabled
      */
     winGame(data, count) {
-        const size = this.props.boardSize;
+        const size = this.state.boardSize;
 
         if (this.checkWin(count) === true) {
             for (let x = 0; x < size; x++) {
@@ -380,7 +393,7 @@ class Board extends Component {
     }
 
     render() {
-        const { boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused} = this.state;
+        const { boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused} = this.state;
         return(
             <div>
                 {(saved) ?
@@ -388,7 +401,7 @@ class Board extends Component {
                         <Save 
                             onClick={() => this.saveRequest()}
                             boardData={boardData}
-                            boardSize={this.props.boardSize}
+                            boardSize={boardSize}
                             firstClick={firstClick}
                             totalMines={totalMines}
                             mineCounter={mineCounter}

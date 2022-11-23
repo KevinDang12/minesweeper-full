@@ -1,27 +1,24 @@
 import './App.css';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Board from './components/Board';
 import Header from './components/Header';
 import Load from './components/Load';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+/**
+ * Display the Header and the Minesweeper Game
+ */
 class App extends Component {
-
-    state = {
-        boardSize: 8
-    }
-
     render() {
-        const { boardSize } = this.state;
-        
+        const url = "/minesweeper-full";     
         return (
-            <Router>
+            <Router forceRefresh={true}>
                 <div>
                     <Header />
                     <Routes>
-                        <Route exact path="/minesweeper-full" element={<Board boardSize={boardSize} />}/>
-                        <Route exact path="/minesweeper-full/:id" element={<Board boardSize={boardSize} />}/>
-                        <Route path="/load" element={<Load />}/>
+                        <Route exact path={url} element={<Board />}/>
+                        <Route exact path={url + "/:id"} element={<Board />}/>
+                        <Route path={url + "/load"} element={<Load />}/>
                     </Routes>
                 </div>
             </Router>

@@ -8,6 +8,10 @@ const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
 });
 
+/**
+ * Component to save the current Minesweeper game
+ * and display information of the current game
+ */
 class Save extends Component {
 
     constructor(props) {
@@ -21,6 +25,10 @@ class Save extends Component {
         this.save = this.save.bind(this);
     }
 
+    /**
+     * Set the name of the save file
+     * @param {*} e 
+     */
     getNameValue(e) {
         const key = e.target.id;
         const value = e.target.value
@@ -28,10 +36,10 @@ class Save extends Component {
         this.setState({[key]: value});
     }
 
+    /**
+     * Save the JSON of the Minesweeper game to the backend server
+     */
     save() {
-
-        console.log(this.state.name);
-
         const text = {
             name: this.state.name,
             mineCounter: this.props.mineCounter,
@@ -45,12 +53,7 @@ class Save extends Component {
             paused: this.props.paused
         }
 
-        console.log(text);
-
-        let func = api.post;
-        let url = "/";
-
-        func(url, text)
+        api.post("/", text)
             .then(result => {
                 if (this.state.created) {
                     alert("Game Saved.");
