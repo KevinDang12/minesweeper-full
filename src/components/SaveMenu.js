@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { timeFormat } from '../GameLogic.js'
+import { Button, Form } from 'react-bootstrap';
 
 /**
  * Get the list of Boards
@@ -9,38 +10,42 @@ import { timeFormat } from '../GameLogic.js'
  */
 class SaveMenu extends Component {
 
-    state = {
-        boards: []
-    }
-
     constructor(props) {
         super(props);
-        this.getBoards();
     }
 
     render() {
-        const { boards } = this.state;
+        const { boards } = this.props;
         return (
-            <div>
-                <h1 align="center">Your Save Files</h1>
+            <div align="center">
+                <h1>Your Save Files</h1>
                     <table className='table'>
-                        <tr>
-                            <th>Name</th>
-                            <th>Board Size</th>
-                            <th>Total Number of Mine</th>
-                            <th>Number of Mines Remaining</th>
-                            <th>Time</th>
-                        </tr>
-                        {boards.map(board => 
-                            <tr key={board.x + " " + board.y}>
-                                <td>{board.name}</td>
-                                <td>{board.boardSize}</td>
-                                <td>{board.totalMines}</td>
-                                <td>{board.mineCounter}</td>
-                                <td>{timeFormat(board.counter)}</td>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Board Size</th>
+                                <th>Total Number of Mine</th>
+                                <th>Number of Mines Remaining</th>
+                                <th>Time</th>
                             </tr>
-                        )}
+                        </thead>
+                        <tbody>
+                            {boards.map(board => 
+                                <tr key={board.id}>
+                                    <td>{board.name}</td>
+                                    <td>{board.boardSize}</td>
+                                    <td>{board.totalMines}</td>
+                                    <td>{board.mineCounter}</td>
+                                    <td>{timeFormat(board.counter)}</td>
+                                </tr>
+                            )}
+                        </tbody>
                     </table>
+
+                    <Form>
+                        <Button variant="success" size={"lg"} onClick={this.props.createNewSave}>New Save</Button>
+                        <Button variant="danger" size={"lg"} onClick={this.props.callBack}>Back</Button>
+                    </Form>
             </div>
         );
     }

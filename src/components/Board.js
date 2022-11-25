@@ -5,9 +5,8 @@ import Save from './Save';
 import Game from './Game';
 import SaveMenu from './SaveMenu';
 import { withRouter } from '../GameLogic.js';
-import { initTileProperties, checkAdjacent, numOfAdjacentMines, revealMines, getBoards } from '../GameLogic.js'
+import { initTileProperties, checkAdjacent, numOfAdjacentMines, revealMines } from '../GameLogic.js'
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
 
 const styles = {
     boardRow: {
@@ -47,6 +46,8 @@ class Board extends Component {
             paused: false,
             saved: false,
             refresh: true,
+            board: [],
+            newSave: false
         }
     }
 
@@ -117,10 +118,10 @@ class Board extends Component {
         const { saved, paused } = this.state;
 
         if (saved === true) {
-            this.setState({saved: false});
+            this.setState({saved: false, newSave: true});
             
         } else {
-            this.setState({saved: true});
+            this.setState({saved: true, newSave: false});
         }
 
         if (!paused) {
@@ -128,6 +129,8 @@ class Board extends Component {
             clearInterval(this.timer);
             this.boardPlay(paused);
         }
+
+        this.getBoards();
     }
 
     /**
@@ -139,24 +142,25 @@ class Board extends Component {
         let rows = [];
         let board = [];
 
-        data.map(row => {
-            row.map(item => {
+        for (let x = 0; x < data.length; x++) {
+            for (let y = 0; y < data[x].length; y++) {
                 rows.push(
                     <Tile
-                        key={item.x + " " + item.y}
-                        onLeftClick={() => this.onClick(item.x, item.y)}
-                        onRightClick={(e) => this.onContextMenu(e, item.x, item.y)}
-                        color={item.color}
-                        value={item.value}
-                        disabled={item.disabled}
-                        click={item.click}
+                        key={x + " " + y}
+                        onLeftClick={() => this.onClick(x, y)}
+                        onRightClick={(e) => this.onContextMenu(e, x, y)}
+                        color={data[x][y].color}
+                        value={data[x][y].value}
+                        disabled={data[x][y].disabled}
+                        click={data[x][y].click}
                         endGame={this.state.endGame}
                     />
                 );
-            });
-            board.push(<div style={styles.boardRow}>{rows}</div>);
+            }
+            board.push(<div key={x} style={styles.boardRow}>{rows}</div>);
             rows = [];
-        });
+        }
+
         return board;
     };
 
@@ -399,15 +403,38 @@ class Board extends Component {
         this.setState({saved: false});
     }
 
+    createNewSave() {
+        this.setState({newSave: true});
+    }
+
+    /**
+     * Get the list of boards saved on the backend server
+     */
+    getBoards = async() => {
+        try {
+            let data = await api.get('/').then(({data}) => data);
+            this.setState({board: data});
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     render() {
-        const { boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused} = this.state;
+        const { board, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave} = this.state;
 
         return(
             <div>
                 {(saved) ?
                     <div>
-                        {(getBoards().length > 0) ? <SaveMenu/> :
-                            <Save 
+                        {(board.length > 0 && !newSave)
+
+                            ? <SaveMenu
+                                boards={board}
+                                callBack={() => this.callBack()}
+                                createNewSave={() => this.createNewSave()}
+                            />
+
+                            : <Save 
                                 onClick={() => this.saveRequest()}
                                 callBack={() => this.callBack()}
                                 boardData={boardData}

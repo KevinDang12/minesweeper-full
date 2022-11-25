@@ -14,14 +14,15 @@ const api = axios.create({
  * Load a game that you selected
  */
 class Load extends Component {
-
-    state = {
-        boards: [],
-    }
-
+    
     constructor(props) {
         super(props);
+        this.state = {
+            boards: [],
+        }
+    }
 
+    componentDidMount() {
         this.getBoards();
     }
 
@@ -32,7 +33,6 @@ class Load extends Component {
         try {
             let data = await api.get('/').then(({data}) => data);
             this.setState({boards: data});
-            console.log(data);
         } catch (err) {
             console.log(err);
         }
@@ -59,28 +59,32 @@ class Load extends Component {
                 <h1 align="center">Your Save Files</h1>
                 {(boards.length <= 0) ? <h3 align="center">It appears you don't have any saved games.</h3> : 
                 <table className='table'>
-                    <tr>
-                        <th>Name</th>
-                        <th>Board Size</th>
-                        <th>Total Number of Mine</th>
-                        <th>Number of Mines Remaining</th>
-                        <th>Time</th>
-                        <th>Delete</th>
-                        <th>Load</th>
-                    </tr>
-                    {boards.map(board => 
-                        <tr key={board.x + " " + board.y}>
-                            <td>{board.name}</td>
-                            <td>{board.boardSize}</td>
-                            <td>{board.totalMines}</td>
-                            <td>{board.mineCounter}</td>
-                            <td>{timeFormat(board.counter)}</td>
-                            <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
-                            <td>
-                                <Link to={"/minesweeper-full/" + board.id}>+</Link>
-                            </td>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Board Size</th>
+                            <th>Total Number of Mine</th>
+                            <th>Number of Mines Remaining</th>
+                            <th>Time</th>
+                            <th>Delete</th>
+                            <th>Load</th>
                         </tr>
-                    )}
+                    </thead>
+                    <tbody>
+                        {boards.map(board => 
+                            <tr key={board.id}>
+                                <td>{board.name}</td>
+                                <td>{board.boardSize}</td>
+                                <td>{board.totalMines}</td>
+                                <td>{board.mineCounter}</td>
+                                <td>{timeFormat(board.counter)}</td>
+                                <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
+                                <td>
+                                    <Link to={"/minesweeper-full/" + board.id}>+</Link>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
                 </table>
                 }
             </div>
