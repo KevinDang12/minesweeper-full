@@ -28,9 +28,9 @@ app.get('/api/boards/:id', (req, res) => {
 app.post('/api/boards', (req, res) => {
     // const { error } = validateData(req.body);
 
-    // if (error) {
-    //     return res.status(400).send(error.details[0].message);
-    // }
+    if (boards.length >= 10) {
+        return res.status(400).send("You cannot have more than 1 saves.");
+    }
 
     const board = {
         id: boards.length + 1,

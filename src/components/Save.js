@@ -61,6 +61,8 @@ class Save extends Component {
                 this.setState({
                     name: "",
                 });
+
+                this.props.callBack()
             })
             .catch(err => {
                 console.log(err.response);

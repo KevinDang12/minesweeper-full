@@ -3,9 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Tile from './Tile';
 import Save from './Save';
 import Game from './Game';
+import SaveMenu from './SaveMenu';
 import { withRouter } from '../GameLogic.js';
-import { initTileProperties, checkAdjacent, numOfAdjacentMines, revealMines } from '../GameLogic.js'
+import { initTileProperties, checkAdjacent, numOfAdjacentMines, revealMines, getBoards } from '../GameLogic.js'
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 const styles = {
     boardRow: {
@@ -29,7 +31,7 @@ class Board extends Component {
 
         super(props);
 
-        let {id} = this.props.params;
+        let { id } = this.props.params;
         const size = 8;
 
         this.state = {
@@ -44,7 +46,7 @@ class Board extends Component {
             timer: null,
             paused: false,
             saved: false,
-            refresh: true
+            refresh: true,
         }
     }
 
@@ -53,9 +55,11 @@ class Board extends Component {
      * if the pathname is "/minesweeper-full"
      */
     componentDidUpdate() {
-        if (this.props.location.pathname == "/minesweeper-full" && this.state.refresh) {
-            this.reset();
-            this.setState({refresh: false});
+        if (this.props.location.pathname === "/minesweeper-full") {
+            if (this.state.refresh) {
+                this.reset();
+                this.setState({refresh: false});
+            }
         }
     }
 
@@ -65,13 +69,13 @@ class Board extends Component {
      */
      componentDidMount() {
         if (!this.state.id) {
-            this.setState({refresh: true})
+            this.setState({refresh: true});
             return;
         }
 
         api.get('/' + this.state.id)
             .then(result => {
-                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, paused, saved } = result.data;
+                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, paused } = result.data;
                 
                 this.setState({
                     boardData: boardData,
@@ -82,7 +86,6 @@ class Board extends Component {
                     counter: counter,
                     timer: timer,
                     paused: paused,
-                    saved: saved
                 });
             })
             .catch(error => {
@@ -114,16 +117,16 @@ class Board extends Component {
         const { saved, paused } = this.state;
 
         if (saved === true) {
-            if (!paused) {
-                this.setState({paused: false});
-                this.incrementTimer();
-            }
             this.setState({saved: false});
             
         } else {
+            this.setState({saved: true});
+        }
+
+        if (!paused) {
             this.setState({paused: true});
             clearInterval(this.timer);
-            this.setState({saved: true});
+            this.boardPlay(paused);
         }
     }
 
@@ -392,25 +395,33 @@ class Board extends Component {
         }, 1000);
     }
 
+    callBack() {
+        this.setState({saved: false});
+    }
+
     render() {
         const { boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused} = this.state;
+
         return(
             <div>
                 {(saved) ?
                     <div>
-                        <Save 
-                            onClick={() => this.saveRequest()}
-                            boardData={boardData}
-                            boardSize={boardSize}
-                            firstClick={firstClick}
-                            totalMines={totalMines}
-                            mineCounter={mineCounter}
-                            endGame={endGame}
-                            counter={counter}
-                            timer={timer}
-                            paused={paused}
-                            saved={saved}
-                         />
+                        {(getBoards().length > 0) ? <SaveMenu/> :
+                            <Save 
+                                onClick={() => this.saveRequest()}
+                                callBack={() => this.callBack()}
+                                boardData={boardData}
+                                boardSize={boardSize}
+                                firstClick={firstClick}
+                                totalMines={totalMines}
+                                mineCounter={mineCounter}
+                                endGame={endGame}
+                                counter={counter}
+                                timer={timer}
+                                paused={paused}
+                                saved={saved}
+                            />
+                        }
                     </div> 
                     : 
                     <Game

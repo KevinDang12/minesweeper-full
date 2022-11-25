@@ -17,7 +17,6 @@ class Load extends Component {
 
     state = {
         boards: [],
-        loadData: {}
     }
 
     constructor(props) {

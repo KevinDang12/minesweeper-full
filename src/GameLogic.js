@@ -1,4 +1,5 @@
 import { useLocation, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * Find the parameters from the Child component that is called on
@@ -10,6 +11,22 @@ export function withRouter( Child ) {
         const params = useParams();
         const location = useLocation();
         return <Child { ...props } params={ params } location={ location } />;
+    }
+}
+
+/**
+ * Get the list of boards saved on the backend server
+ */
+export async function getBoards() {
+    try {
+        const api = axios.create({
+            baseURL: `http://localhost:5000/api/boards`
+        });
+        let data = await api.get('/').then(({data}) => data);
+        console.log(data);
+        return data;
+    } catch (err) {
+        console.log(err);
     }
 }
 
