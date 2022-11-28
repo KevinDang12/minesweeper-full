@@ -431,6 +431,15 @@ class Board extends Component {
                                 boards={board}
                                 callBack={() => this.callBack()}
                                 createNewSave={() => this.createNewSave()}
+                                boardData={boardData}
+                                boardSize={boardSize}
+                                firstClick={firstClick}
+                                totalMines={totalMines}
+                                mineCounter={mineCounter}
+                                endGame={endGame}
+                                counter={counter}
+                                timer={timer}
+                                paused={paused}
                                 saved={saved}
                                 saveRequest={() => this.saveRequest()}
                             />

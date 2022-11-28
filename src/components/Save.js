@@ -17,8 +17,11 @@ class Save extends Component {
     constructor(props) {
         super(props);
 
+        const {id} = this.props;
+
         this.state = {
             name: "",
+            id: (id) ? id : null
         }
 
         this.getNameValue = this.getNameValue.bind(this);
@@ -53,7 +56,15 @@ class Save extends Component {
             paused: this.props.paused
         }
 
-        api.post("/", text)
+        let url = "/";
+        let func = api.post;
+
+        if (this.state.id) {
+            url += this.state.id;
+            func = api.put;
+        }
+
+        func(url, text)
             .then(result => {
                 if (this.state.created) {
                     alert("Game Saved.");

@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import { timeFormat } from '../GameLogic.js'
 import './SaveMenu.css';
 import { Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 import Save from './Save.js';
-
-const api = axios.create({
-    baseURL: `http://localhost:5000/api/boards`
-});
 
 /**
  * Get the list of Boards
@@ -19,27 +14,18 @@ class SaveMenu extends Component {
 
         this.state = {
             newSave: false,
-            board: {}
+            id: null
         }
     }
 
-    // overWriteBoard = async(id) => {
-    //     try {
-    //         let data = await api.get(`/${id}`).then(({data}) => data);
-
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // }
-
     saveBoard = (id) => {
         const board = this.props.boards.find(b => b.id === id);
-        this.setState({newSave: true, board: board});
+        this.setState({newSave: true, id: board.id});
     }
 
     render() {
-        const { boards, saved, saveRequest, callBack } = this.props;
-        const { newSave, board } = this.state;
+        const { boards, saved, saveRequest, callBack, createNewSave } = this.props;
+        const { newSave, id } = this.state;
         return (
             <div>
                 {(newSave === false) ? 
@@ -69,23 +55,24 @@ class SaveMenu extends Component {
                         </table>
 
                         <Form>
-                            <Button variant="success" size={"lg"} onClick={this.props.createNewSave}>New Save</Button>
-                            <Button variant="danger" size={"lg"} onClick={this.props.callBack}>Back</Button>
+                            <Button variant="success" size={"lg"} onClick={createNewSave}>New Save</Button>
+                            <Button variant="danger" size={"lg"} onClick={callBack}>Back</Button>
                         </Form>
                     </div>
                 : 
                     <Save 
+                        id={id}
                         onClick={() => saveRequest()}
                         callBack={() => callBack()}
-                        boardData={board.boardData}
-                        boardSize={board.boardSize}
-                        firstClick={board.firstClick}
-                        totalMines={board.totalMines}
-                        mineCounter={board.mineCounter}
-                        endGame={board.endGame}
-                        counter={board.counter}
-                        timer={board.timer}
-                        paused={board.paused}
+                        boardData={this.props.boardData}
+                        boardSize={this.props.boardSize}
+                        firstClick={this.props.firstClick}
+                        totalMines={this.props.totalMines}
+                        mineCounter={this.props.mineCounter}
+                        endGame={this.props.endGame}
+                        counter={this.props.counter}
+                        timer={this.props.timer}
+                        paused={this.props.paused}
                         saved={saved}
                     />
                 }
