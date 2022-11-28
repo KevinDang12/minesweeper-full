@@ -46,8 +46,7 @@ class Board extends Component {
             paused: false,
             saved: false,
             refresh: true,
-            board: [],
-            newSave: false
+            board: []
         }
     }
 
@@ -432,6 +431,8 @@ class Board extends Component {
                                 boards={board}
                                 callBack={() => this.callBack()}
                                 createNewSave={() => this.createNewSave()}
+                                saved={saved}
+                                saveRequest={() => this.saveRequest()}
                             />
 
                             : <Save 

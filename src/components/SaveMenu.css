@@ -1,0 +1,4 @@
+.save-files>table>tbody>tr:hover {
+    background-color: gray;
+    color: white;
+}
