@@ -2,8 +2,10 @@
     background-color: rgb(247, 198, 2);
     height: 4.5em;
     line-height: 4em;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    position: fixed;
 }
 
 .header>ul {

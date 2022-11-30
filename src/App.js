@@ -15,11 +15,13 @@ class App extends Component {
             <Router forceRefresh={true}>
                 <div>
                     <Header />
-                    <Routes>
-                        <Route exact path={url} element={<Board />}/>
-                        <Route exact path={url + "/:id"} element={<Board />}/>
-                        <Route path={url + "/load"} element={<Load />}/>
-                    </Routes>
+                    <div className='Heading'>
+                        <Routes>
+                            <Route exact path={url} element={<Board />}/>
+                            <Route exact path={url + "/:id"} element={<Board />}/>
+                            <Route path={url + "/load"} element={<Load />}/>
+                        </Routes>
+                    </div>
                 </div>
             </Router>
         );

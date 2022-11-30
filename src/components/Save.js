@@ -21,7 +21,8 @@ class Save extends Component {
 
         this.state = {
             name: "",
-            id: (id) ? id : null
+            id: (id) ? id : null,
+            full: false
         }
 
         this.getNameValue = this.getNameValue.bind(this);
@@ -37,6 +38,14 @@ class Save extends Component {
         const value = e.target.value
 
         this.setState({[key]: value});
+    }
+
+    checkBoards = async() => {
+        let data = await api.get('/').then(({data}) => data);
+        if (data.length >= 10) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -64,6 +73,8 @@ class Save extends Component {
             func = api.put;
         }
 
+        this.checkBoards();
+
         func(url, text)
             .then(result => {
                 if (this.state.created) {
@@ -71,11 +82,15 @@ class Save extends Component {
                 }
                 this.setState({
                     name: "",
+                    full: false
                 });
 
                 this.props.callBack()
             })
             .catch(err => {
+                if (this.checkBoards) {
+                    this.setState({full: true})
+                }
                 console.log(err.response);
         });
     };
@@ -106,6 +121,12 @@ class Save extends Component {
                     <Button variant="success" size={"lg"} onClick={this.save}>Save</Button>
                     <Button variant="danger" size={"lg"} onClick={this.props.onClick}>Back</Button>
                 </Form>
+
+                {(this.state.full) ? 
+                    <p className='message'>You cannot have more than 10 save files, either delete or update one of your save files</p> 
+                :
+                    <></>
+                }
             </div>
         );
     }
