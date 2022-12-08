@@ -18,13 +18,17 @@ class SaveMenu extends Component {
         }
     }
 
+    /**
+     * Pass the data of the save board to update
+     * @param {*} id Get the board using the id
+     */
     saveBoard = (id) => {
         const board = this.props.boards.find(b => b.id === id);
         this.setState({newSave: true, id: board.id});
     }
 
     render() {
-        const { boards, saved, saveRequest, callBack, createNewSave } = this.props;
+        const { boards, saveRequest, callBack, createNewSave } = this.props;
         const { newSave, id } = this.state;
         return (
             <div>
@@ -64,16 +68,7 @@ class SaveMenu extends Component {
                         id={id}
                         onClick={() => saveRequest()}
                         callBack={() => callBack()}
-                        boardData={this.props.boardData}
-                        boardSize={this.props.boardSize}
-                        firstClick={this.props.firstClick}
-                        totalMines={this.props.totalMines}
-                        mineCounter={this.props.mineCounter}
-                        endGame={this.props.endGame}
-                        counter={this.props.counter}
-                        timer={this.props.timer}
-                        paused={this.props.paused}
-                        saved={saved}
+                        data={this.props.data}
                     />
                 }
             </div>

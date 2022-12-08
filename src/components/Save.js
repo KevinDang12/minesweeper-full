@@ -40,6 +40,11 @@ class Save extends Component {
         this.setState({[key]: value});
     }
 
+    /**
+     * Check the number of saved minesweeper games if it 
+     * is greater than or equal to 10
+     * @returns True if the length is greater than 10 else false
+     */
     checkBoards = async() => {
         let data = await api.get('/').then(({data}) => data);
         if (data.length >= 10) {
@@ -50,19 +55,23 @@ class Save extends Component {
 
     /**
      * Save the JSON of the Minesweeper game to the backend server
+     * or update an existing Minesweeper game
      */
     save() {
+
+        const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused } = this.props.data;
+
         const text = {
             name: this.state.name,
-            mineCounter: this.props.mineCounter,
-            counter: this.props.counter,
-            boardSize: this.props.boardSize,
-            boardData: this.props.boardData,
-            firstClick: this.props.firstClick,
-            totalMines: this.props.totalMines,
-            endGame: this.props.endGame,
-            timer: this.props.timer,
-            paused: this.props.paused
+            mineCounter: mineCounter,
+            counter: counter,
+            boardSize: boardSize,
+            boardData: boardData,
+            firstClick: firstClick,
+            totalMines: totalMines,
+            endGame: endGame,
+            timer: timer,
+            paused: paused
         }
 
         let url = "/";
@@ -77,9 +86,9 @@ class Save extends Component {
 
         func(url, text)
             .then(result => {
-                if (this.state.created) {
-                    alert("Game Saved.");
-                }
+                
+                alert("Game Saved.");
+                
                 this.setState({
                     name: "",
                     full: false
@@ -96,7 +105,7 @@ class Save extends Component {
     };
     
     render() {
-        const { mineCounter, counter, boardSize } = this.props;
+        const { mineCounter, counter, boardSize } = this.props.data;
         return (
             <div align="center">
                 <br/>

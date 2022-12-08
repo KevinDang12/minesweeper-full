@@ -9,7 +9,7 @@ export function withRouter( Child ) {
     return ( props ) => {
         const params = useParams();
         const location = useLocation();
-        return <Child { ...props } params={ params } location={ location } />;
+        return <Child { ...props } params={ params } location={ location }/>;
     }
 }
 
@@ -68,8 +68,10 @@ export function timeFormat(time) {
 
 /**
  * Gather the adjacent tiles
- * @param tile The current tile to check for adjacent mines
- * @returns {*[]} The adjacent tiles
+ * @param {*} tile The current tile to check for adjacent mines
+ * @param {*} size The size of the board
+ * @param {*} data The minesweeper board data
+ * @returns The arrays containing the data of adjacent tiles
  */
 export function checkAdjacent(tile, size, data) {
 
@@ -103,11 +105,11 @@ export function checkAdjacent(tile, size, data) {
 }
 
 /**
- * Find the number of tiles that has a Mine
- * @param adjacent List of adjacent tiles
- * @returns {number} Number of adjacent tiles with a Mine
+ * Find the number of tiles that has a mine
+ * @param {*} adjacent List of adjacent tiles
+ * @returns Number of adjacent tiles with a mine
  */
-export function numOfAdjacentMines(adjacent) {
+function numOfAdjacentMines(adjacent) {
     let count = 0;
     for (const tile of adjacent) {
         if (tile.hasMine) {
@@ -118,12 +120,61 @@ export function numOfAdjacentMines(adjacent) {
 }
 
 /**
- * Reveal the location of the mines that the user did not find, the correct tiles flagged containing a mine,
+ * Check for the number of adjacent mines on a tile and 
+ * the total number of mines on a board
+ * @param {*} tileX X coordinate of the tile
+ * @param {*} tileY Y coordinate of the tile
+ * @param {*} data Board data of the tiles in the game
+ * @param {*} size Size of the board
+ * @returns The total number of mines and the board data
+ */
+export function numberOfMines(tileX, tileY, data, size) {
+    data[tileX][tileY].hasMine = false;
+
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            let tile = data[x][y];
+
+            if (tile === data[tileX][tileY]) continue;
+
+            tile.hasMine = Math.random() < 0.2;
+        }
+    }
+
+    let count = 0;
+
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            let tile = data[x][y];
+            tile.adjacentMines = numOfAdjacentMines(checkAdjacent(tile, size, data));
+
+            if (tile.hasMine) {
+                tile.value = "X";
+                count += 1;
+
+            } else {
+                tile.value = tile.adjacentMines;
+            }
+        }
+    }
+
+    let result = {
+        count: count,
+        data: data
+    };
+
+    return result;
+}
+
+/**
+ * Reveal the location of the mines that the user did not find, 
+ * the correct tiles flagged containing a mine,
  * and the incorrect tiles flagged not containing a mine.
- * @returns {*[]} Board game data with the correct and incorrect mine locations
+ * @param {*} size The size of the minesweeper board
+ * @param {*} data The minesweeper game data
+ * @returns Board game data with the correct and incorrect mine locations
  */
 export function revealMines(size, data) {
-
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
             let tile = data[x][y];

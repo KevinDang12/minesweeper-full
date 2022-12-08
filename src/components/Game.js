@@ -45,7 +45,7 @@ class Game extends Component {
     }
 
     render() {
-        const { boardData, counter, mineCounter, firstClick, endGame, paused } = this.props;
+        const { boardData, counter, mineCounter, firstClick, endGame, paused } = this.props.data;
 
         return(
             <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
