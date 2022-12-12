@@ -23,7 +23,7 @@ class SaveMenu extends Component {
      * @param {*} id Get the board using the id
      */
     saveBoard = (id) => {
-        const board = this.props.boards.find(b => b.id === id);
+        const board = this.props.data.boards.find(b => b.id === id);
         this.setState({newSave: true, id: board.id});
     }
 

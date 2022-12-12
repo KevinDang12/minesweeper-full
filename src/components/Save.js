@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import './Save.css';
 import axios from 'axios';
-import { timeFormat } from '../GameLogic.js'
+import { timeFormat } from '../GameLogic.js';
+import { v4 as uuid } from 'uuid';
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -61,7 +62,10 @@ class Save extends Component {
 
         const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused } = this.props.data;
 
+        const id = uuid();
+
         const text = {
+            id: id,
             name: this.state.name,
             mineCounter: mineCounter,
             counter: counter,

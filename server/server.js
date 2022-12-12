@@ -16,7 +16,7 @@ app.get("/api/boards", (req, res) => {
 });
 
 app.get('/api/boards/:id', (req, res) => {
-    const board = boards.find(b => b.id === parseInt(req.params.id));
+    const board = boards.find(b => b.id === req.params.id);
 
     if (!board) { // 404 object not found
         res.status(404).send('The board with the given ID was not found.');
@@ -26,14 +26,12 @@ app.get('/api/boards/:id', (req, res) => {
 });
 
 app.post('/api/boards', (req, res) => {
-    // const { error } = validateData(req.body);
-
     if (boards.length >= 10) {
         return res.status(400).send("You cannot have more than 10 saves.");
     }
 
     const board = {
-        id: boards.length + 1,
+        id: req.body.id,
         boardSize: req.body.boardSize,
         counter: req.body.counter,
         endGame: req.body.endGame,
@@ -56,12 +54,6 @@ app.put('/api/boards/:id', (req, res) => {
     if (!board) {
         return res.status(404).send('The board with the given ID was not found.');
     }
-
-    // const { error } = validateData(req.body);
-
-    // if (error) {
-    //     return res.status(400).send(error.details[0].message);
-    // }
 
     board.boardSize = req.body.boardSize;
     board.counter = req.body.counter;

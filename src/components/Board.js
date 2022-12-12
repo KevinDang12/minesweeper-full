@@ -31,9 +31,13 @@ class Board extends Component {
 
         let { id } = this.props.params;
         const size = 8;
+        let reset = false;
 
-        const result = JSON.parse(localStorage.getItem('reset'));
-        const reset = result.reset || false;
+        if (JSON.parse(localStorage.getItem('reset')) !== null) {
+            const result = JSON.parse(localStorage.getItem('reset'));
+            console.log(result.reset);
+            reset = result.reset;
+        }
 
         this.state = {
             id: (reset) ? null : id,
@@ -459,7 +463,6 @@ class Board extends Component {
                         {(boards.length > 0 && !newSave)
 
                             ? <SaveMenu
-                                boards={boards}
                                 callBack={() => this.callBack()}
                                 createNewSave={() => this.createNewSave()}
                                 saveRequest={() => this.saveRequest()}
