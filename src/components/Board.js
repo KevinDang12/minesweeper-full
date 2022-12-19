@@ -35,7 +35,6 @@ class Board extends Component {
 
         if (JSON.parse(localStorage.getItem('reset')) !== null) {
             const result = JSON.parse(localStorage.getItem('reset'));
-            console.log(result.reset);
             reset = result.reset;
         }
 
@@ -78,6 +77,13 @@ class Board extends Component {
             }
         }
 
+        // Prevents the user from going back to the previous page
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener('popstate', function(event) {
+            window.history.pushState(null, document.title, window.location.href);
+        });
+
+        // If the user refreshes the page, set id to null
         window.onbeforeunload = (event) => {
             const e = event || window.event;
             e.preventDefault();
@@ -252,7 +258,6 @@ class Board extends Component {
      */
     onClick(x, y) {
         let { boardData, firstClick, boardSize } = this.state;
-        console.log(this.state.reset);
 
         if (!firstClick) {
             this.setState({firstClick: true});

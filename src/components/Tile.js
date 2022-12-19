@@ -51,7 +51,7 @@ class Tile extends Component {
                     margin: '0.5px'}}
                 disabled={this.props.disabled}
                 onClick={this.props.onLeftClick}>
-                <img src={this.getImage()}/>
+                <img src={this.getImage()} alt=""/>
             </button>
         );
     }

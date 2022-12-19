@@ -7,14 +7,25 @@ app.use(cors());
 
 const boards = [];
 
+/**
+ * GET Request when the user first access the backend
+ */
 app.get('/', (req, res) => {
     res.send('You can access the Minesweeper server by going to the /api/boards directory');
 });
 
+/**
+ * GET Request when the user finds the list of boards
+ * from the backend
+ */
 app.get("/api/boards", (req, res) => {
     res.send(boards);
 });
 
+/**
+ * GET Request when the user gets a board using
+ * an id
+ */
 app.get('/api/boards/:id', (req, res) => {
     const board = boards.find(b => b.id === req.params.id);
 
@@ -25,6 +36,9 @@ app.get('/api/boards/:id', (req, res) => {
     res.send(board);
 });
 
+/**
+ * 
+ */
 app.post('/api/boards', (req, res) => {
     if (boards.length >= 10) {
         return res.status(400).send("You cannot have more than 10 saves.");

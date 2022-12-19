@@ -40,10 +40,6 @@ const styles = {
  */
 class Game extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const { boardData, counter, mineCounter, firstClick, endGame, paused } = this.props.data;
 
