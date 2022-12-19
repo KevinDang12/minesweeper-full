@@ -30,6 +30,8 @@ app.post('/api/boards', (req, res) => {
         return res.status(400).send("You cannot have more than 10 saves.");
     }
 
+    let unix_timestamp = Math.floor(Date.now());
+
     const board = {
         id: req.body.id,
         boardSize: req.body.boardSize,
@@ -38,6 +40,7 @@ app.post('/api/boards', (req, res) => {
         firstClick: req.body.firstClick,
         mineCounter: req.body.mineCounter,
         name: req.body.name,
+        unixTime: unix_timestamp,
         paused: req.body.paused,
         counter: req.body.counter,
         totalMines: req.body.totalMines,

@@ -54,6 +54,30 @@ class Load extends Component {
         }
     }
 
+    date = (unixTime) => {
+        let date = new Date(unixTime);
+
+        let hours = date.getHours();
+
+        let minutes = date.getMinutes();
+
+        let seconds = date.getSeconds();
+
+        let twelveClock = (hours > 12) ? "PM" : "AM";
+
+        hours = (hours > 12) ? hours - 12 : hours;
+
+        let day = date.getDate()
+
+        let month = date.getMonth() + 1;
+
+        let year = date.getFullYear();
+
+        let time = `${year}/${month}/${day} ${hours}:${minutes}:${seconds} ${twelveClock}`;
+
+        return time;
+    }
+
     render() {
         const { boards } = this.state;
         return (
@@ -63,12 +87,8 @@ class Load extends Component {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <th>Save #</th>
+                            <th>Save Time</th>
                             <th>Name</th>
-                            <th>Board Size</th>
-                            <th>Total Number of Mine</th>
-                            <th>Number of Mines Remaining</th>
-                            <th>Time</th>
                             <th>Delete</th>
                             <th>Load</th>
                         </tr>
@@ -76,12 +96,8 @@ class Load extends Component {
                     <tbody>
                         {boards.map(board => 
                             <tr key={board.id}>
-                                <th>{board.id}</th>
+                                <td>{this.date(board.unixTime)}</td>
                                 <td>{board.name}</td>
-                                <td>{board.boardSize}</td>
-                                <td>{board.totalMines}</td>
-                                <td>{board.mineCounter}</td>
-                                <td>{timeFormat(board.counter)}</td>
                                 <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
                                 <td>
                                     <Link to={"/minesweeper-full/" + board.id}><Button>Load</Button></Link>
