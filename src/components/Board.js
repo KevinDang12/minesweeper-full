@@ -52,7 +52,8 @@ class Board extends Component {
             saved: false,
             refresh: true,
             boards: [],
-            reset: reset
+            reset: reset,
+            start: false
         }
     }
 
@@ -111,7 +112,7 @@ class Board extends Component {
 
         api.get('/' + this.state.id)
             .then(result => {
-                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, paused } = result.data;
+                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, start } = result.data;
 
                 this.setState({
                     boardData: boardData,
@@ -121,12 +122,15 @@ class Board extends Component {
                     endGame: endGame,
                     counter: counter,
                     timer: timer,
-                    paused: paused,
+                    paused: false,
+                    start: start
                 });
             })
             .catch(error => {
                 console.log(error);
             })
+        
+        this.incrementTimer();
     }
 
     /**
@@ -142,7 +146,8 @@ class Board extends Component {
             mineCounter: 0,
             counter: 0,
             paused: false,
-            saved: false
+            saved: false,
+            start: false
         });
     };
 
@@ -162,7 +167,7 @@ class Board extends Component {
         if (!paused) {
             this.setState({paused: true});
             clearInterval(this.timer);
-            this.boardPlay(paused);
+            // this.boardPlay(paused);
         }
 
         this.getBoards();
@@ -202,34 +207,34 @@ class Board extends Component {
     /**
      * Pause or Resume Game Timer
      */
-    pauseOrPlay() {
-        let { paused } = this.state;
+    // pauseOrPlay() {
+    //     let { paused } = this.state;
 
-        if (paused === true) {
-            this.setState({paused: false});
-            this.incrementTimer();
-        } else {
-            this.setState({paused: true});
-            clearInterval(this.timer);
-        }
-        this.boardPlay(paused);
-    }
+    //     if (paused === true) {
+    //         this.setState({paused: false});
+    //         this.incrementTimer();
+    //     } else {
+    //         this.setState({paused: true});
+    //         clearInterval(this.timer);
+    //     }
+    //     this.boardPlay(paused);
+    // }
 
     /**
      * Disable or enable board if the game is paused or not
      * @param {*} paused 
      */
-    boardPlay(paused) {
-        const { boardData } = this.state;
+    // boardPlay(paused) {
+    //     const { boardData } = this.state;
 
-        for (const row of boardData) {
-            for (const element of row) {
-                element.disabled = (!paused) ? true : false;
-            }
-        }
+    //     for (const row of boardData) {
+    //         for (const element of row) {
+    //             element.disabled = (!paused) ? true : false;
+    //         }
+    //     }
 
-        this.setState({boardData: boardData});
-    }
+    //     this.setState({boardData: boardData});
+    // }
 
     /**
      * Set the number of adjacent mines for 
@@ -262,7 +267,7 @@ class Board extends Component {
         if (!firstClick) {
             this.setState({firstClick: true});
             boardData = this.findAdjacentMines(x, y, boardData, boardSize);
-            this.incrementTimer();
+            // this.incrementTimer();
         }
 
         this.clearArea(x, y, boardData);
@@ -402,7 +407,7 @@ class Board extends Component {
      */
     incrementTimer() {
         this.timer = setInterval(() => {
-            if (this.state.endGame || !this.state.firstClick) {
+            if (this.state.endGame || !this.state.start) {
                 clearInterval(this.timer);
                 return;
             }
@@ -413,12 +418,29 @@ class Board extends Component {
         }, 1000);
     }
 
+    start() {
+        this.incrementTimer();
+
+        let tileProps = this.state.boardData;
+        const size = this.state.boardSize;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                let tile = tileProps[x][y];
+                tile.disabled = false;
+            }
+        }
+
+        this.setState({start: true, paused: false});
+    }
+
     /**
      * Go back to the board if the user does
      * not want to save the game
      */
     callBack() {
-        this.setState({saved: false});
+        this.setState({saved: false, paused: false});
+        this.incrementTimer();
     }
 
     /**
@@ -437,14 +459,14 @@ class Board extends Component {
     getBoards = async() => {
         try {
             let data = await api.get('/').then(({data}) => data);
-            this.setState({board: data});
+            this.setState({boards: data});
         } catch (err) {
             console.log(err);
         }
     }
 
     render() {
-        const { boards, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave } = this.state;
+        const { boards, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave, start } = this.state;
 
         const data = {
             boards: boards,
@@ -458,7 +480,8 @@ class Board extends Component {
             endGame: endGame,
             timer: timer,
             paused: paused,
-            newSave: newSave
+            newSave: newSave,
+            start: start
         }
 
         return(
@@ -485,7 +508,7 @@ class Board extends Component {
                     <Game
                         data={data}
                         reset={() => this.reset()}
-                        pauseOrPlay={() => this.pauseOrPlay()}
+                        start={() => this.start()}
                         saveRequest={() => this.saveRequest()}
                         displayBoard={() => this.displayBoard(boardData)}
                     />

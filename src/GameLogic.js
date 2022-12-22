@@ -33,11 +33,43 @@ export function initTileProperties(size) {
                 hasMine: false,
                 flagged: false,
                 adjacentMines: 0,
-                disabled: false,
+                disabled: true,
             }
         }
     }
     return tileProps;
+}
+
+/**
+ * Show the date the minesweeper game was saved.
+ * @param {*} unixTime The recorded unix time when the minesweeper game was saved.
+ * @returns The date of the saved minesweeper game in year/month/day hour:minute:seconds in AM/PM
+ */
+export function date(unixTime) {
+
+    let date = new Date(unixTime);
+
+    let hours = String(date.getHours());
+    let minutes = String(date.getMinutes());
+    let seconds = String(date.getSeconds());
+
+    let twelveClock = (hours > 12) ? "PM" : "AM";
+
+    hours = (hours > 12) ? hours - 12 : hours;
+
+    let day = String(date.getDate());
+    let month = String(date.getMonth() + 1);
+    let year = String(date.getFullYear());
+
+    minutes = minutes.padStart(2, '0');
+    seconds = seconds.padStart(2, '0');
+    day = day.padStart(2, '0');
+    month = month.padStart(2, '0');
+    year = year.padStart(2, '0');
+
+    let time = `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${twelveClock}`;
+
+    return time;
 }
 
 /**

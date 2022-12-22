@@ -1,6 +1,7 @@
 import React from "react";
 import './Header.css';
 import { Link } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 /**
  * Displays the Header containing a link to the Minesweeper
@@ -11,15 +12,24 @@ import { Link } from 'react-router-dom';
 function Header() {
 
     const url = "/minesweeper-full";
+    const location = useLocation();
 
     return(
+
         <div className="header">
             <ul className="header-left">
-                <li className="logo"><Link to={url}>Minesweeper</Link></li>
+                <li className="logo">
+                    {(location.pathname === url + "/") 
+                    ? 
+                        <Link to={url + "/game"}>Minesweeper</Link>
+                    :
+                        <p>Minesweeper</p>
+                    }
+                </li>
             </ul>
 
             <ul className="header-right">
-                <li><Link to={url + "/load"}>Load</Link></li>
+                <li><Link to={url + "/"}>Load</Link></li>
             </ul>
         </div>
     );

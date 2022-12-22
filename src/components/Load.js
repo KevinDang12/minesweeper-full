@@ -3,6 +3,7 @@ import axios from 'axios';
 import './Load.css';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import { date } from '../GameLogic.js';
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -48,81 +49,39 @@ class Load extends Component {
         }
     }
 
-    /**
-     * Delete the board from the backend server using the id
-     * @param {*} id The id of the board stored on the backend server
-     */
-    deleteBoard = async(id) => {
-        try {
-            let data = await api.delete(`/${id}`);
-            console.log(data);
-            this.getBoards();
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    /**
-     * Show the date the minesweeper game was saved.
-     * @param {*} unixTime The recorded unix time when the minesweeper game was saved.
-     * @returns The date of the saved minesweeper game in year/month/day hour:minute:seconds in AM/PM
-     */
-    date = (unixTime) => {
-
-        let date = new Date(unixTime);
-
-        let hours = String(date.getHours());
-        let minutes = String(date.getMinutes());
-        let seconds = String(date.getSeconds());
-
-        let twelveClock = (hours > 12) ? "PM" : "AM";
-
-        hours = (hours > 12) ? hours - 12 : hours;
-
-        let day = String(date.getDate());
-        let month = String(date.getMonth() + 1);
-        let year = String(date.getFullYear());
-
-        minutes = minutes.padStart(2, '0');
-        seconds = seconds.padStart(2, '0');
-        day = day.padStart(2, '0');
-        month = month.padStart(2, '0');
-        year = year.padStart(2, '0');
-
-        let time = `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${twelveClock}`;
-
-        return time;
-    }
-
     render() {
         const { boards } = this.state;
+        const url = "/minesweeper-full";
         return (
             <div>
-                <h1 align="center">Your Save Files</h1>
-                {(boards.length <= 0) ? <h3 align="center">It appears you don't have any saved games.</h3> : 
+                <h1 align="center">Save Files</h1>
+                {(boards.length <= 0) ? <h3 align="center">It appears there aren't any saved games yet.</h3> : 
                 <table className='table'>
                     <thead>
                         <tr>
+                            <th>Save #</th>
                             <th>Save Time</th>
                             <th>Name</th>
-                            <th>Delete</th>
                             <th>Load</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {boards.map(board => 
+                        {boards.map((board, index) => 
                             <tr key={board.id}>
-                                <td>{this.date(board.unixTime)}</td>
+                                <td>{index + 1}</td>
+                                <td>{date(board.unixTime)}</td>
                                 <td>{board.name}</td>
-                                <td><button onClick={() => this.deleteBoard(board.id)}>X</button></td>
                                 <td>
-                                    <Link to={"/minesweeper-full/" + board.id}><Button>Load</Button></Link>
+                                    <Link to={"/minesweeper-full/game/" + board.id}><Button>Load</Button></Link>
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
                 }
+                <div className='newGame' align='center'>
+                    <Link to={url + "/game"}><Button>New Game</Button></Link> 
+                </div>
             </div>
         );
     }

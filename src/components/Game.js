@@ -41,7 +41,7 @@ const styles = {
 class Game extends Component {
 
     render() {
-        const { boardData, counter, mineCounter, firstClick, endGame, paused } = this.props.data;
+        const { boardData, counter, mineCounter, firstClick, endGame, start } = this.props.data;
 
         return(
             <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
@@ -49,14 +49,20 @@ class Game extends Component {
                     <div style={styles.counter}>Mines Remaining: {mineCounter}</div>
                     <div style={styles.timer}>Time: {timeFormat(counter)}</div>
                     <div style={styles.reset}>
-                        <Button variant="primary" size={"lg"} disabled={!firstClick} onClick={this.props.reset}>Reset</Button>
+                        <Button variant="primary" size={"lg"} disabled={!start} onClick={this.props.reset}>Reset</Button>
                     </div>
+                    
                     <div style={styles.reset}>
-                        <Button variant="danger" size={"lg"} onClick={this.props.pauseOrPlay} disabled={endGame || !firstClick}>{paused ? "Resume" : "Pause"}</Button>
+                        <Button variant="warning" size={"lg"} onClick={this.props.saveRequest} disabled={endGame || !start}>Save</Button>
                     </div>
-                    <div style={styles.reset}>
-                        <Button variant="warning" size={"lg"} onClick={this.props.saveRequest} disabled={endGame || !firstClick}>Save</Button>
-                    </div>
+
+                    {(!start && !firstClick) ?
+                        <div style={styles.reset}>
+                            <Button variant="danger" size={"lg"} onClick={this.props.start}>Start</Button>
+                        </div> 
+                    :
+                        <></>
+                    }
                 </div>
 
                 <div className={"board"} style={styles.board}>

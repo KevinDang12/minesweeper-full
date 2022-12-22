@@ -37,13 +37,9 @@ app.get('/api/boards/:id', (req, res) => {
 });
 
 /**
- * 
+ * POST Request add a save minesweeper game to the back-end
  */
 app.post('/api/boards', (req, res) => {
-    if (boards.length >= 10) {
-        return res.status(400).send("You cannot have more than 10 saves.");
-    }
-
     let unix_timestamp = Math.floor(Date.now());
 
     const board = {
@@ -58,20 +54,27 @@ app.post('/api/boards', (req, res) => {
         paused: req.body.paused,
         counter: req.body.counter,
         totalMines: req.body.totalMines,
-        boardData: req.body.boardData
+        boardData: req.body.boardData,
+        start: req.body.start
     }
 
     boards.push(board);
     res.send(board);
 });
 
+/**
+ * PUT Request update an existing minesweeper save game
+ */
 app.put('/api/boards/:id', (req, res) => {
-    const board = boards.find(b => b.id === parseInt(req.params.id));
+    const board = boards.find(b => b.id === req.params.id);
 
     if (!board) {
         return res.status(404).send('The board with the given ID was not found.');
     }
 
+    let unix_timestamp = Math.floor(Date.now());
+
+    board.unixTime = unix_timestamp;
     board.boardSize = req.body.boardSize;
     board.counter = req.body.counter;
     board.endGame = req.body.endGame;
@@ -82,19 +85,8 @@ app.put('/api/boards/:id', (req, res) => {
     board.counter = req.body.counter;
     board.totalMines = req.body.totalMines;
     board.boardData = req.body.boardData;
+    board.start = req.body.start;
 
-    res.send(board);
-});
-
-app.delete('/api/boards/:id', (req, res) => {
-    const board = boards.find(b => b.id === parseInt(req.params.id));
-
-    if (!board) { // 404 object not found
-        res.status(404).send('The board with the given ID was not found.');
-    }
-
-    const index = boards.indexOf(board);
-    boards.splice(index, 1);
     res.send(board);
 });
 

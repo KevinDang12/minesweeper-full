@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { timeFormat } from '../GameLogic.js'
+import { date } from '../GameLogic.js'
 import './SaveMenu.css';
 import { Button, Form } from 'react-bootstrap';
 import Save from './Save.js';
@@ -28,8 +28,10 @@ class SaveMenu extends Component {
     }
 
     render() {
-        const { boards, saveRequest, callBack, createNewSave } = this.props;
+        const { saveRequest, callBack, createNewSave } = this.props;
         const { newSave, id } = this.state;
+        const { boards } = this.props.data;
+
         return (
             <div>
                 {(newSave === false) ? 
@@ -38,29 +40,31 @@ class SaveMenu extends Component {
                         <table className='table'>
                             <thead>
                                 <tr>
+                                    <th>Save #</th>
+                                    <th>Save Time</th>
                                     <th>Name</th>
-                                    <th>Board Size</th>
-                                    <th>Total Number of Mine</th>
-                                    <th>Number of Mines Remaining</th>
-                                    <th>Time</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {boards.map(board => 
+                                {boards.map((board, index) => 
                                     <tr key={board.id} onClick={() => this.saveBoard(board.id)}>
+                                        <td>{index + 1}</td>
+                                        <td>{date(board.unixTime)}</td>
                                         <td>{board.name}</td>
-                                        <td>{board.boardSize}</td>
-                                        <td>{board.totalMines}</td>
-                                        <td>{board.mineCounter}</td>
-                                        <td>{timeFormat(board.counter)}</td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
 
                         <Form>
-                            <Button variant="success" size={"lg"} onClick={createNewSave}>New Save</Button>
-                            <Button variant="danger" size={"lg"} onClick={callBack}>Back</Button>
+                            <div className='float-container'>
+                                <div className='float-child-left'>
+                                    <Button variant="success" size={"lg"} onClick={createNewSave}>New Save</Button>
+                                </div>
+                                <div className='float-child-right'>
+                                    <Button variant="danger" size={"lg"} onClick={callBack}>Back</Button>
+                                </div>
+                            </div>
                         </Form>
                     </div>
                 : 

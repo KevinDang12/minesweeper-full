@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import './Save.css';
 import axios from 'axios';
-import { timeFormat } from '../GameLogic.js';
+import { timeFormat, date } from '../GameLogic.js';
 import { v4 as uuid } from 'uuid';
+import { Jump } from './Jump';
 
 const api = axios.create({
     baseURL: `http://localhost:5000/api/boards`
@@ -19,11 +20,13 @@ class Save extends Component {
         super(props);
 
         const {id} = this.props;
+        const time = Math.floor(Date.now());
 
         this.state = {
             name: "",
             id: (id) ? id : null,
-            full: false
+            noName: false,
+            time: time
         }
 
         this.getNameValue = this.getNameValue.bind(this);
@@ -42,25 +45,12 @@ class Save extends Component {
     }
 
     /**
-     * Check the number of saved minesweeper games if it 
-     * is greater than or equal to 10
-     * @returns True if the length is greater than 10 else false
-     */
-    checkBoards = async() => {
-        let data = await api.get('/').then(({data}) => data);
-        if (data.length >= 10) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Save the JSON of the Minesweeper game to the backend server
      * or update an existing Minesweeper game
      */
     save() {
 
-        const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused } = this.props.data;
+        const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused, start } = this.props.data;
 
         const id = uuid();
 
@@ -75,7 +65,8 @@ class Save extends Component {
             totalMines: totalMines,
             endGame: endGame,
             timer: timer,
-            paused: paused
+            paused: paused,
+            start: start
         }
 
         let url = "/";
@@ -86,11 +77,13 @@ class Save extends Component {
             func = api.put;
         }
 
-        this.checkBoards();
+        if (this.state.name.length <= 0 || this.state.name === "") {
+            this.setState({noName: true})
+            return;
+        }
 
         func(url, text)
-            .then(result => {
-                
+            .then(result => {  
                 alert("Game Saved.");
                 
                 this.setState({
@@ -99,24 +92,29 @@ class Save extends Component {
                 });
 
                 this.props.callBack()
+
             })
             .catch(err => {
-                if (this.checkBoards) {
-                    this.setState({full: true})
-                }
                 console.log(err.response);
         });
+
+        return id;
     };
     
     render() {
         const { mineCounter, counter, boardSize } = this.props.data;
+
         return (
             <div align="center">
                 <br/>
                 <Form>
-                    <Form.Group className='form'>
+                    <Form.Group className='save'>
                         <Form.Label>Save Name:</Form.Label>
-                        <Form.Control value={this.state.name} id="name" type="text" placeholder="Give a name for your save" onChange={this.getNameValue}/>
+                        <Form.Control value={this.state.name} id="name" type="text" placeholder="Give a name for your save" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange={this.getNameValue}/>
+                    </Form.Group>
+
+                    <Form.Group className='form'>
+                        <Form.Label>Save Time: {date(this.state.time)}</Form.Label>
                     </Form.Group>
 
                     <Form.Group className='form'>
@@ -131,15 +129,22 @@ class Save extends Component {
                         <Form.Label>Your board length: {boardSize}</Form.Label>
                     </Form.Group>
 
-                    <Button variant="success" size={"lg"} onClick={this.save}>Save</Button>
-                    <Button variant="danger" size={"lg"} onClick={this.props.onClick}>Back</Button>
-                </Form>
+                    {(this.state.noName) ? 
+                        <p className='message'>You must include a name for your save file</p> 
+                    :
+                        <></>
+                    }
 
-                {(this.state.full) ? 
-                    <p className='message'>You cannot have more than 10 save files, either delete or update one of your save files</p> 
-                :
-                    <></>
-                }
+                    <div className='float-container'>
+                        <div className='float-child-left'>
+                            <Jump onClick={this.save} />
+                        </div>
+
+                        <div className='float-child-right'>
+                            <Button variant="danger" size={"lg"} onClick={this.props.onClick}>Back</Button>
+                        </div>
+                    </div>
+                </Form>
             </div>
         );
     }
