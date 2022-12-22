@@ -17,9 +17,9 @@ class App extends Component {
                     <Header />
                     <div className='Heading'>
                         <Routes>
-                            <Route exact path={url} element={<Board />}/>
-                            <Route exact path={url + "/:id"} element={<Board />}/>
-                            <Route path={url + "/load"} element={<Load />}/>
+                            <Route exact path={url} element={<Load />}/>
+                            <Route exact path={url + "/game/:id"} element={<Board />}/>
+                            <Route path={url + "/game"} element={<Board />}/>
                         </Routes>
                     </div>
                 </div>
