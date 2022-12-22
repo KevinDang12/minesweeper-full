@@ -167,7 +167,6 @@ class Board extends Component {
         if (!paused) {
             this.setState({paused: true});
             clearInterval(this.timer);
-            // this.boardPlay(paused);
         }
 
         this.getBoards();
@@ -205,38 +204,6 @@ class Board extends Component {
     };
 
     /**
-     * Pause or Resume Game Timer
-     */
-    // pauseOrPlay() {
-    //     let { paused } = this.state;
-
-    //     if (paused === true) {
-    //         this.setState({paused: false});
-    //         this.incrementTimer();
-    //     } else {
-    //         this.setState({paused: true});
-    //         clearInterval(this.timer);
-    //     }
-    //     this.boardPlay(paused);
-    // }
-
-    /**
-     * Disable or enable board if the game is paused or not
-     * @param {*} paused 
-     */
-    // boardPlay(paused) {
-    //     const { boardData } = this.state;
-
-    //     for (const row of boardData) {
-    //         for (const element of row) {
-    //             element.disabled = (!paused) ? true : false;
-    //         }
-    //     }
-
-    //     this.setState({boardData: boardData});
-    // }
-
-    /**
      * Set the number of adjacent mines for 
      * each tile and find the total mines
      * @param {*} tileX X coordinate of the tile
@@ -267,7 +234,6 @@ class Board extends Component {
         if (!firstClick) {
             this.setState({firstClick: true});
             boardData = this.findAdjacentMines(x, y, boardData, boardSize);
-            // this.incrementTimer();
         }
 
         this.clearArea(x, y, boardData);
@@ -418,6 +384,9 @@ class Board extends Component {
         }, 1000);
     }
 
+    /**
+     * Start the minesweeper game
+     */
     start() {
         this.incrementTimer();
 
