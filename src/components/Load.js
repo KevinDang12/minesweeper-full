@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 import { date } from '../GameLogic.js';
 
 const api = axios.create({
-    baseURL: `http://localhost:5000/api/boards`
+    baseURL: `${window.location.origin}/api/boards`
 });
 
 /**
