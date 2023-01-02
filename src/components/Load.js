@@ -52,6 +52,7 @@ class Load extends Component {
     render() {
         const { boards } = this.state;
         const url = "/minesweeper-full";
+
         return (
             <div>
                 <h1 align="center">Save Files</h1>
@@ -72,7 +73,7 @@ class Load extends Component {
                                 <td>{date(board.unixTime)}</td>
                                 <td>{board.name}</td>
                                 <td>
-                                    <Link to={"/minesweeper-full/game/" + board.id}><Button>Load</Button></Link>
+                                    <Link to={url + "/game/" + board.id}><Button>Load</Button></Link>
                                 </td>
                             </tr>
                         )}
