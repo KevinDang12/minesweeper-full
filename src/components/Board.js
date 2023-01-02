@@ -17,7 +17,7 @@ const styles = {
 }
 
 const api = axios.create({
-    baseURL: `http://localhost:5000/api/boards`
+    baseURL: `${window.location.origin}/api/boards`
 });
 
 /**
@@ -167,6 +167,9 @@ class Board extends Component {
         if (!paused) {
             this.setState({paused: true});
             clearInterval(this.timer);
+        } else {
+            this.setState({paused: false});
+            this.incrementTimer();
         }
 
         this.getBoards();

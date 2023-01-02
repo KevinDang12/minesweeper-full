@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { Jump } from './Jump';
 
 const api = axios.create({
-    baseURL: `http://localhost:5000/api/boards`
+    baseURL: `${window.location.origin}/api/boards`
 });
 
 /**
