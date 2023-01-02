@@ -126,8 +126,8 @@ class Board extends Component {
                     start: start
                 });
             })
-            .catch(error => {
-                console.log(error);
+            .catch(err => {
+                console.log(err);
             })
         
         this.incrementTimer();

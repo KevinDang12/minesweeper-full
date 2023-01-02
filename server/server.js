@@ -1,18 +1,28 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const path = require('path');
 
 app.use(express.json());
 app.use(cors());
 
-const boards = [];
+const _dirname = path.dirname("");
+const buildPath = path.join(_dirname, "../build");
 
-/**
- * GET Request when the user first access the backend
- */
-app.get('/', (req, res) => {
-    res.send('You can access the Minesweeper server by going to the /api/boards directory');
-});
+app.use(express.static(buildPath));
+
+app.get("/minesweeper-full|/minesweeper-full/game|/minesweeper-full/game/:id", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "../build/index.html"),
+        function (err) {
+            if (err) {
+                res.status(500).send(err);
+            }
+        }
+    );
+})
+
+const boards = [];
 
 /**
  * GET Request when the user finds the list of boards
@@ -91,4 +101,4 @@ app.put('/api/boards/:id', (req, res) => {
 });
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(`Listening on port ${port}\nThe Server is running`));
