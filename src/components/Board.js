@@ -53,7 +53,8 @@ class Board extends Component {
             refresh: true,
             boards: [],
             reset: reset,
-            start: false
+            start: false,
+            saveError: false
         }
     }
 
@@ -64,37 +65,6 @@ class Board extends Component {
     setState(state) {
         window.localStorage.setItem('state', JSON.stringify(state));
         super.setState(state);
-    }
-
-    /**
-     * When the component updates, reset the board
-     * if the pathname is "/minesweeper-full"
-     */
-    componentDidUpdate() {
-        if (this.props.location.pathname === "/minesweeper-full") {
-            if (this.state.refresh) {
-                this.reset();
-                this.setState({refresh: false});
-            }
-        }
-
-        // Prevents the user from going back to the previous page
-        window.history.pushState(null, document.title, window.location.href);
-        window.addEventListener('popstate', function(event) {
-            window.history.pushState(null, document.title, window.location.href);
-        });
-
-        // If the user refreshes the page, set id to null
-        window.onbeforeunload = (event) => {
-            const e = event || window.event;
-            e.preventDefault();
-            if (e) {
-                localStorage.setItem('reset', JSON.stringify({ reset: true }));
-                e.returnValue = ''; // Legacy method for cross browser support
-            }
-
-            return '';
-        };
     }
 
     /**
@@ -430,15 +400,17 @@ class Board extends Component {
      */
     getBoards = async() => {
         try {
+            this.setState({saveError: false});
             let data = await api.get('/').then(({data}) => data);
             this.setState({boards: data});
         } catch (err) {
             console.log(err);
+            this.setState({saveError: true});
         }
     }
 
     render() {
-        const { boards, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave, start } = this.state;
+        const { boards, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave, start, saveError } = this.state;
 
         const data = {
             boards: boards,
@@ -473,6 +445,7 @@ class Board extends Component {
                                 onClick={() => this.saveRequest()}
                                 callBack={() => this.callBack()}
                                 data={data}
+                                saveError={saveError}
                             />
                         }
                     </div> 

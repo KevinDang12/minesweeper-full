@@ -10,16 +10,13 @@ import { useLocation } from "react-router-dom";
  * Load Component and the Minesweeper game
  */
 function Header() {
-
-    const url = "/minesweeper-full";
     const location = useLocation();
-
+    const url = "/minesweeper"
     return(
-
         <div className="header">
             <ul className="header-left">
                 <li className="logo">
-                    {(location.pathname === url + "/") 
+                    {(location.pathname === url) 
                     ? 
                         <Link to={url + "/game"}>Minesweeper</Link>
                     :
@@ -29,7 +26,7 @@ function Header() {
             </ul>
 
             <ul className="header-right">
-                <li><Link to={url + "/"}>Load</Link></li>
+                <li><Link to={url}>Load</Link></li>
             </ul>
         </div>
     );

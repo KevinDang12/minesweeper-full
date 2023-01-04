@@ -4,11 +4,16 @@ import { Button } from 'react-bootstrap';
 
 export function Jump(props) {
     let navigate = useNavigate();
+    const url = "/minesweeper"
 
+    /**
+     * Redirect the user to the new URL after
+     * saving their minesweeper game
+     */
     const jumpToRoute = () => {
         try {
             const id = props.onClick();
-            let path = '/minesweeper-full/game/' + id;
+            let path = url + '/game/' + id;
             navigate(path);
         } catch (err) {
             console.log(err);
