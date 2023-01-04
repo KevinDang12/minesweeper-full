@@ -10,16 +10,13 @@ const api = axios.create({
 });
 
 /**
- * Get the list of Boards
- * Delete on the of saved games
- * Update the name of your game
- * Load a game that you selected
+ * Get the list of Boards from the backend server
+ * and load a minesweeper game
  */
-class Load extends Component {
+class LoadSaveFiles extends Component {
     
     constructor(props) {
         super(props);
-        localStorage.setItem('reset', JSON.stringify({ reset: false }));
         this.state = {
             boards: [],
             loading: false,
@@ -38,7 +35,7 @@ class Load extends Component {
         try {
             this.setState({ error: false, loading: true });
             let data = await api.get('/').then(({data}) => data);
-            this.setState({boards: data});
+            this.setState({ boards: data });
             this.setState({ loading: false });
         } catch (err) {
             console.log(err);
@@ -97,4 +94,4 @@ class Load extends Component {
     }
 }
 
-export default Load;
+export default LoadSaveFiles;

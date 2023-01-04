@@ -2,7 +2,8 @@ import './App.css';
 import React, { Component } from 'react';
 import Board from './components/Board';
 import Header from './components/Header';
-import Load from './components/Load';
+import LoadSaveFiles from './components/LoadSaveFiles';
+import NotFoundPage from './components/NotFoundPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 /**
@@ -17,9 +18,10 @@ class App extends Component {
                     <Header />
                     <div className='Heading'>
                         <Routes>
-                            <Route exact path={url} element={<Load />}/>
+                            <Route exact path={url} element={<LoadSaveFiles />}/>
                             <Route exact path={url + "/game/:id"} element={<Board />}/>
                             <Route path={url + "/game"} element={<Board />}/>
+                            <Route path="*" element={<NotFoundPage />}/>
                         </Routes>
                     </div>
                 </div>

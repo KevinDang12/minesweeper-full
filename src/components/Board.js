@@ -31,15 +31,9 @@ class Board extends Component {
 
         let { id } = this.props.params;
         const size = 8;
-        let reset = false;
-
-        if (JSON.parse(localStorage.getItem('reset')) !== null) {
-            const result = JSON.parse(localStorage.getItem('reset'));
-            reset = result.reset;
-        }
 
         this.state = {
-            id: (reset) ? null : id,
+            id: id,
             boardSize: size,
             boardData: initTileProperties(size),
             firstClick: false,
@@ -50,21 +44,10 @@ class Board extends Component {
             timer: null,
             paused: false,
             saved: false,
-            refresh: true,
             boards: [],
-            reset: reset,
             start: false,
             saveError: false
         }
-    }
-
-    /**
-     * Create a local storage when the user refreshes the page
-     * @param {*} state The state to store in the local storage
-     */
-    setState(state) {
-        window.localStorage.setItem('state', JSON.stringify(state));
-        super.setState(state);
     }
 
     /**
@@ -73,12 +56,8 @@ class Board extends Component {
      */
     componentDidMount() {
         if (!this.state.id) {
-            localStorage.setItem('reset', JSON.stringify({ reset: false }));
-            this.setState({refresh: true});
             return;
         }
-
-        this.setState({reset: false});
 
         api.get('/' + this.state.id)
             .then(result => {
@@ -159,8 +138,8 @@ class Board extends Component {
                 rows.push(
                     <Tile
                         key={x + " " + y}
-                        onLeftClick={() => this.onClick(x, y)}
-                        onRightClick={(e) => this.onContextMenu(e, x, y)}
+                        onLeftClick={() => this.leftClick(x, y)}
+                        onRightClick={(e) => this.rightClick(e, x, y)}
                         color={data[x][y].color}
                         value={data[x][y].value}
                         disabled={data[x][y].disabled}
@@ -201,7 +180,7 @@ class Board extends Component {
      * @param {*} x X coordinate of the selected tile
      * @param {*} y Y coordinate of the selected tile
      */
-    onClick(x, y) {
+    leftClick(x, y) {
         let { boardData, firstClick, boardSize } = this.state;
 
         if (!firstClick) {
@@ -257,7 +236,7 @@ class Board extends Component {
      * @param {*} y -coordinates of the selected tile
      * @returns If the selected mine is disabled
      */
-    onContextMenu(e, x, y) {
+    rightClick(e, x, y) {
         e.preventDefault();
 
         let data = this.state.boardData;
@@ -342,7 +321,7 @@ class Board extends Component {
     }
 
     /**
-     * Start the game timer after the user clicks on the first tile on the minesweeper board
+     * Start/Resume the game timer
      */
     incrementTimer() {
         this.timer = setInterval(() => {
@@ -380,16 +359,14 @@ class Board extends Component {
      * Go back to the board if the user does
      * not want to save the game
      */
-    callBack() {
+    goToBoard() {
         this.setState({saved: false, paused: false});
         this.incrementTimer();
     }
 
     /**
-     * Show the save menu if it exists
-     * to allow the user to overwrite
-     * an existing save
-     * or create a new save
+     * Show the save menu if it exists to allow the user to overwrite
+     * an existing save or create a new save
      */
     createNewSave() {
         this.setState({newSave: true});
@@ -435,15 +412,15 @@ class Board extends Component {
                         {(boards.length > 0 && !newSave)
 
                             ? <SaveMenu
-                                callBack={() => this.callBack()}
+                                goToBoard={() => this.goToBoard()}
                                 createNewSave={() => this.createNewSave()}
                                 saveRequest={() => this.saveRequest()}
                                 data={data}
                             />
 
                             : <Save 
-                                onClick={() => this.saveRequest()}
-                                callBack={() => this.callBack()}
+                                saveRequest={() => this.saveRequest()}
+                                goToBoard={() => this.goToBoard()}
                                 data={data}
                                 saveError={saveError}
                             />
