@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
  */
 class App extends Component {
     render() {
-        const url = "/minesweeper-full";     
+        const url = "/minesweeper"
         return (
             <Router forceRefresh={true}>
                 <div>

@@ -28,7 +28,6 @@ class Save extends Component {
             noName: false,
             time: time
         }
-
         this.getNameValue = this.getNameValue.bind(this);
         this.save = this.save.bind(this);
     }
@@ -49,7 +48,6 @@ class Save extends Component {
      * or update an existing Minesweeper game
      */
     save() {
-
         const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused, start } = this.props.data;
 
         const id = uuid();
@@ -83,19 +81,21 @@ class Save extends Component {
         }
 
         func(url, text)
-            .then(result => {  
-                alert("Game Saved.");
+            .then(result => {
+                alert("Your game is saved.");
                 
                 this.setState({
                     name: "",
                     full: false
                 });
 
-                this.props.callBack()
+                this.props.callBack();
 
             })
             .catch(err => {
                 console.log(err.response);
+                alert("Unable to save game");
+                this.props.callBack();
         });
 
         return id;
@@ -103,6 +103,7 @@ class Save extends Component {
     
     render() {
         const { mineCounter, counter, boardSize } = this.props.data;
+        const { saveError } = this.props;
 
         return (
             <div align="center">
@@ -130,14 +131,19 @@ class Save extends Component {
                     </Form.Group>
 
                     {(this.state.noName) ? 
-                        <p className='message'>You must include a name for your save file</p> 
+                        <p className='name'>You must include a name for your save file</p> 
                     :
                         <></>
                     }
 
                     <div className='float-container'>
                         <div className='float-child-left'>
-                            <Jump onClick={this.save} />
+                            {(saveError)
+                            ?
+                                <Button variant="success" size={"lg"} onClick={this.save}>Save</Button>
+                            :
+                                <Jump onClick={this.save} />
+                            }
                         </div>
 
                         <div className='float-child-right'>

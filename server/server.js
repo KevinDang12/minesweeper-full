@@ -11,7 +11,11 @@ const buildPath = path.join(_dirname, "../build");
 
 app.use(express.static(buildPath));
 
-app.get("/minesweeper-full|/minesweeper-full/game|/minesweeper-full/game/:id", (req, res) => {
+/**
+ * Display the Front-end minesweeper games when the users are
+ * on the following pathname
+ */
+app.use("/minesweeper|/minesweeper/game|/minesweeper/game/:id", (req, res) => {
     res.sendFile(
         path.join(__dirname, "../build/index.html"),
         function (err) {
