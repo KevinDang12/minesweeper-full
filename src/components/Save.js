@@ -44,8 +44,9 @@ class Save extends Component {
     }
 
     /**
-     * Save the JSON of the Minesweeper game to the backend server
-     * or update an existing Minesweeper game
+     * Save the Minesweeper game
+     * or update an existing Minesweeper game 
+     * as a JSON to the backend server
      */
     save() {
         const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused, start } = this.props.data;
@@ -89,13 +90,13 @@ class Save extends Component {
                     full: false
                 });
 
-                this.props.callBack();
+                this.props.goToBoard();
 
             })
             .catch(err => {
                 console.log(err.response);
                 alert("Unable to save game");
-                this.props.callBack();
+                this.props.goToBoard();
         });
 
         return id;
@@ -103,7 +104,7 @@ class Save extends Component {
     
     render() {
         const { mineCounter, counter, boardSize } = this.props.data;
-        const { saveError } = this.props;
+        const { saveError, saveRequest } = this.props;
 
         return (
             <div align="center">
@@ -147,7 +148,7 @@ class Save extends Component {
                         </div>
 
                         <div className='float-child-right'>
-                            <Button variant="danger" size={"lg"} onClick={this.props.onClick}>Back</Button>
+                            <Button variant="danger" size={"lg"} onClick={saveRequest}>Back</Button>
                         </div>
                     </div>
                 </Form>

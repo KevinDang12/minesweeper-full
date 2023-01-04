@@ -28,7 +28,7 @@ class SaveMenu extends Component {
     }
 
     render() {
-        const { saveRequest, callBack, createNewSave } = this.props;
+        const { saveRequest, goToBoard, createNewSave } = this.props;
         const { newSave, id } = this.state;
         const { boards } = this.props.data;
 
@@ -62,7 +62,7 @@ class SaveMenu extends Component {
                                     <Button variant="success" size={"lg"} onClick={createNewSave}>New Save</Button>
                                 </div>
                                 <div className='float-child-right'>
-                                    <Button variant="danger" size={"lg"} onClick={callBack}>Back</Button>
+                                    <Button variant="danger" size={"lg"} onClick={goToBoard}>Back</Button>
                                 </div>
                             </div>
                         </Form>
@@ -70,8 +70,8 @@ class SaveMenu extends Component {
                 : 
                     <Save 
                         id={id}
-                        onClick={() => saveRequest()}
-                        callBack={() => callBack()}
+                        saveRequest={() => saveRequest()}
+                        goToBoard={() => goToBoard()}
                         data={this.props.data}
                     />
                 }

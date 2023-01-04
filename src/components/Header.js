@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
 /**
- * Displays the Header containing a link to the Minesweeper
- * game and a link to load a Minesweeper game
- * @returns The Header containing links to the
- * Load Component and the Minesweeper game
+ * Displays the Header containing a link to the Minesweeper game and a link to load a Minesweeper game
+ * @returns The Header NavBar that redirects the user to the Load Component and the Minesweeper game Component
  */
 function Header() {
     const location = useLocation();
