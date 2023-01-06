@@ -2,12 +2,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 app.use(express.json());
 app.use(cors());
 
 const _dirname = path.dirname("");
 const buildPath = path.join(_dirname, "../build");
+const FILE = 'saveFile.json';
 
 app.use(express.static(buildPath));
 
@@ -26,13 +28,36 @@ app.get(/^(?!\/api).+/, (req, res) => {
     );
 })
 
-const boards = [];
+/**
+ * Read the save file to get the list of saved minesweeper games
+ * @param {*} boards The boards array to store the objects of the minesweeper games
+ */
+const read = () => {
+    try {
+        let data = fs.readFileSync(FILE, 'utf8');
+        return JSON.parse(data);
+      } catch (err) {
+        console.error(err);
+      }
+}
+
+/**
+ * Overwrite the existing save file, or create a new save file if it does not exists with the save data
+ * @param {*} boards The array of minesweeper games to save to the save file.
+ */
+const write = (boards) => {
+    fs.writeFile(FILE, JSON.stringify(boards), function (err) {
+        if (err) throw err;
+        console.log('Saved!');
+    });
+}
 
 /**
  * GET Request when the user finds the list of boards
  * from the backend
  */
 app.get("/api/boards", (req, res) => {
+    let boards = read();
     res.send(boards);
 });
 
@@ -41,6 +66,9 @@ app.get("/api/boards", (req, res) => {
  * an id
  */
 app.get('/api/boards/:id', (req, res) => {
+
+    let boards = read();
+
     const board = boards.find(b => b.id === req.params.id);
 
     if (!board) { // 404 object not found
@@ -54,6 +82,9 @@ app.get('/api/boards/:id', (req, res) => {
  * POST Request add a save minesweeper game to the back-end
  */
 app.post('/api/boards', (req, res) => {
+
+    let boards = [];
+
     let unix_timestamp = Math.floor(Date.now());
 
     const board = {
@@ -71,8 +102,14 @@ app.post('/api/boards', (req, res) => {
         boardData: req.body.boardData,
         start: req.body.start
     }
-
+    
+    if (fs.existsSync(FILE)) {
+        boards = read();
+    }
     boards.push(board);
+
+    write(boards);
+
     res.send(board);
 });
 
@@ -80,6 +117,9 @@ app.post('/api/boards', (req, res) => {
  * PUT Request update an existing minesweeper save game
  */
 app.put('/api/boards/:id', (req, res) => {
+
+    let boards = read();
+
     const board = boards.find(b => b.id === req.params.id);
 
     if (!board) {
@@ -100,6 +140,8 @@ app.put('/api/boards/:id', (req, res) => {
     board.totalMines = req.body.totalMines;
     board.boardData = req.body.boardData;
     board.start = req.body.start;
+
+    write(boards);
 
     res.send(board);
 });
