@@ -36,9 +36,9 @@ const read = () => {
     try {
         let data = fs.readFileSync(FILE, 'utf8');
         return JSON.parse(data);
-      } catch (err) {
+    } catch (err) {
         console.error(err);
-      }
+    }
 }
 
 /**
