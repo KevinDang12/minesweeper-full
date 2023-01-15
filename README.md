@@ -1,3 +1,4 @@
+# minesweeper-full
 A Minesweeper Web App Game with a Backend server
 
 It allows users to load and save their games on different devices.
