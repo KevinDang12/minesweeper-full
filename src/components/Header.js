@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
  * Displays the Header containing a link to the Minesweeper game and a link to load a Minesweeper game
  * @returns The Header NavBar that redirects the user to the Load Component and the Minesweeper game Component
  */
-function Header() {
+export default function Header() {
     const location = useLocation();
     const url = "/minesweeper"
     return(
@@ -29,5 +29,3 @@ function Header() {
         </div>
     );
 }
-
-export default Header;

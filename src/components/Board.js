@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Tile from './Tile';
 import Save from './Save';
 import Game from './Game';
 import SaveMenu from './SaveMenu';
-import { initTileProperties, numberOfMines, checkAdjacent, revealMines, withRouter } from '../GameLogic.js'
+import { initTileProperties, numberOfMines, checkAdjacent, revealMines, withRouter } from './GameLogic.js'
 import axios from 'axios';
+import { useStopwatch } from 'react-timer-hook';
 
 const styles = {
     boardRow: {
@@ -23,113 +24,122 @@ const api = axios.create({
 /**
  * The minesweeper board game that displays the tiles in the same number of rows and columns
  */
-class Board extends Component {
+function Board(props) {
 
-    constructor(props) {
+    const id = props.params.id;
+    const boardSize = 8;
 
-        super(props);
+    const [boardData, setBoardData] = useState(initTileProperties(boardSize));
+    const [firstClick, setFirstClick] = useState(false);
+    const [totalMines, setTotalMines] = useState(0);
+    const [mineCounter, setMineCounter] = useState(0);
+    const [endGame, setEndGame] = useState(false);
+    const [paused, setPaused] = useState(false);
+    const [saved, setSaved] = useState(false);
+    const [boards, setBoards] = useState([]);
+    const [start, setStart] = useState(false);
+    const [saveError, setSaveError] = useState(false);
+    const [newSave, setNewSave] = useState(false);
 
-        let { id } = this.props.params;
-        const size = 8;
-
-        this.state = {
-            id: id,
-            boardSize: size,
-            boardData: initTileProperties(size),
-            firstClick: false,
-            totalMines: 0,
-            mineCounter: 0,
-            endGame: false,
-            counter: 0,
-            timer: null,
-            paused: false,
-            saved: false,
-            boards: [],
-            start: false,
-            saveError: false
-        }
-    }
 
     /**
-     * ComponentDidMount where a board id was found,
-     * set the state to the game board data
+     * React Timer Hook
      */
-    componentDidMount() {
-        if (!this.state.id) {
-            return;
+    const {
+        seconds,
+        minutes,
+        hours,
+        start: startTimer,
+        pause: pauseTimer,
+        reset: resetTimer,
+    } = useStopwatch({ autoStart: false });
+
+    /**
+     * If a board id was found,
+     * get the board data from the database
+     */
+    useEffect(() => {
+        if (id) {
+            api.get('/' + id)
+                .then(result => {
+                    let { boardData, firstClick, totalMines, mineCounter, endGame, counter, start } = result.data;
+
+                    // Set the timer to the time that was saved
+                    const time = new Date();
+                    time.setSeconds(time.getSeconds() + counter);
+                    resetTimer(time, true);
+
+                    setBoardData(boardData);
+                    setFirstClick(firstClick);
+                    setTotalMines(totalMines);
+                    setMineCounter(mineCounter);
+                    setEndGame(endGame);
+                    setPaused(false);
+                    setStart(start);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+    }, [id]);
+
+    /**
+     * Check if the timer has exceeded 60 minutes
+     */
+    useEffect(() => {
+        if (hours === 1) {
+            pauseTimer();
+        }
+    });
+    
+    /**
+     * If the game is being saved,
+     * pause the game timer and prepare the board data to be saved
+     */
+    const saveRequest = () => {
+        if (saved) {
+            setNewSave(true);
+            setSaved(false);
+
+        } else {
+            setNewSave(false);
+            setSaved(true);
         }
 
-        api.get('/' + this.state.id)
-            .then(result => {
-                let { boardData, firstClick, totalMines, mineCounter, endGame, counter, timer, start } = result.data;
+        if (!paused) {
+            pauseTimer();
+            setPaused(true);
 
-                this.setState({
-                    boardData: boardData,
-                    firstClick: firstClick,
-                    totalMines: totalMines,
-                    mineCounter: mineCounter,
-                    endGame: endGame,
-                    counter: counter,
-                    timer: timer,
-                    paused: false,
-                    start: start
-                });
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        
-        this.incrementTimer();
-    }
+        } else {
+            startTimer();
+            setPaused(false);
+        }
+
+        getBoards();
+    };
 
     /**
      * Reset the minesweeper game
      */
-    reset() {
-        clearInterval(this.timer);
-        this.setState({
-            boardData: initTileProperties(this.state.boardSize),
-            firstClick: false,
-            totalMines: 0,
-            endGame: false,
-            mineCounter: 0,
-            counter: 0,
-            paused: false,
-            saved: false,
-            start: false
-        });
+    const reset = () => {
+        setBoardData(initTileProperties(boardSize));
+        setFirstClick(false);
+        setTotalMines(0);
+        setMineCounter(0);
+        setEndGame(false);
+        setPaused(false);
+        setSaved(false);
+        setStart(false);
+        const stopwatchOffset = new Date();
+        resetTimer(stopwatchOffset, false);
     };
-
-    /**
-     * Save Current Minesweeper Game
-     */
-    saveRequest() {
-        const { saved, paused } = this.state;
-
-        if (saved === true) {
-            this.setState({saved: false, newSave: true});
-            
-        } else {
-            this.setState({saved: true, newSave: false});
-        }
-
-        if (!paused) {
-            this.setState({paused: true});
-            clearInterval(this.timer);
-        } else {
-            this.setState({paused: false});
-            this.incrementTimer();
-        }
-
-        this.getBoards();
-    }
 
     /**
      * Display the minesweeper game using the game data
      * @param {*} data Array of minesweeper tiles
      * @returns Minesweeper board arranged in the same number of rows and columns
      */
-    displayBoard(data) {
+    const displayBoard = (data) => {
         let rows = [];
         let board = [];
 
@@ -138,13 +148,13 @@ class Board extends Component {
                 rows.push(
                     <Tile
                         key={x + " " + y}
-                        onLeftClick={() => this.leftClick(x, y)}
-                        onRightClick={(e) => this.rightClick(e, x, y)}
+                        onLeftClick={() => leftClick(x, y)}
+                        onRightClick={(e) => rightClick(e, x, y)}
                         color={data[x][y].color}
                         value={data[x][y].value}
                         disabled={data[x][y].disabled}
                         click={data[x][y].click}
-                        endGame={this.state.endGame}
+                        endGame={endGame}
                     />
                 );
             }
@@ -161,16 +171,13 @@ class Board extends Component {
      * @param {*} tileX X coordinate of the tile
      * @param {*} tileY Y coordinate of the tile
      * @param {*} boardData Board data of the tiles in the game
-     * @param {*} size Size of the board
      * @returns The board data
      */
-    findAdjacentMines(tileX, tileY, boardData, size) {
+    const findAdjacentMines = (tileX, tileY, boardData) => {
+        let { data, count } = numberOfMines(tileX, tileY, boardData, boardSize);
 
-        let { data, count } = numberOfMines(tileX, tileY, boardData, size);
-
-        this.setState({
-            totalMines: count,
-            mineCounter: count});
+        setTotalMines(count);
+        setMineCounter(count);
 
         return data;
     }
@@ -180,16 +187,14 @@ class Board extends Component {
      * @param {*} x X coordinate of the selected tile
      * @param {*} y Y coordinate of the selected tile
      */
-    leftClick(x, y) {
-        let { boardData, firstClick, boardSize } = this.state;
+    const leftClick = (x, y) => {
+        let data = [...boardData];
 
         if (!firstClick) {
-            this.setState({firstClick: true});
-            boardData = this.findAdjacentMines(x, y, boardData, boardSize);
+            setFirstClick(true);
+            setBoardData(findAdjacentMines(x, y, data));
         }
-
-        this.clearArea(x, y, boardData);
-        this.setState({boardData: boardData});
+        clearArea(x, y);
     }
 
     /**
@@ -201,12 +206,15 @@ class Board extends Component {
      * @param {*} data Board game data to update
      * @returns Updated board game data
      */
-    clearArea(x, y, data) {
+    const clearArea = (x, y) => {
+        let data = [...boardData];
         let tile = data[x][y];
 
         if (tile.hasMine && !tile.flag) {
-            data = revealMines(this.state.boardSize, data);
-            this.setState({endGame: true});
+            setBoardData(revealMines(boardSize, data));
+            pauseTimer();
+            setEndGame(true);
+            return;
 
         } else if (!tile.click && !tile.flag) {
             tile.click = true;
@@ -214,19 +222,18 @@ class Board extends Component {
             tile.color = 'rgb(255,255,255)';
 
             if (tile.adjacentMines === 0) {
-                let adjacent = checkAdjacent(tile, this.state.boardSize, data);
+                let adjacent = checkAdjacent(tile, boardSize, data);
                 for (const value of adjacent) {
-                    this.clearArea(value.x, value.y, data);
+                    clearArea(value.x, value.y);
                 }
             }
+            setBoardData(data);
+            return;
         }
 
-        const count = this.state.mineCounter;
-        if (count === 0) {
-            data = this.winGame(data, count);
+        if (mineCounter === 0) {
+            setBoardData(winGame(data, mineCounter));
         }
-
-        return data;
     }
 
     /**
@@ -236,18 +243,18 @@ class Board extends Component {
      * @param {*} y -coordinates of the selected tile
      * @returns If the selected mine is disabled
      */
-    rightClick(e, x, y) {
+    const rightClick = (e, x, y) => {
         e.preventDefault();
 
-        let data = this.state.boardData;
-        let count = this.state.mineCounter;
+        let data = [...boardData];
+        let count = mineCounter;
         let tile = data[x][y];
 
         if (tile.disabled) {
             return;
         }
 
-        if (this.state.firstClick) {
+        if (firstClick) {
             if (tile.flag) {
                 tile.flag = false;
                 if (tile.hasMine) {
@@ -255,7 +262,7 @@ class Board extends Component {
                 } else {
                     tile.value = tile.adjacentMines;
                 }
-                if (count < this.state.totalMines) count += 1;
+                if (count < totalMines) count += 1;
 
             } else if (!tile.flag && !tile.click) {
                 tile.flag = true;
@@ -264,11 +271,11 @@ class Board extends Component {
             }
 
             if (count === 0) {
-                data = this.winGame(data, count);
+                data = winGame(data, count);
             }
 
-            this.setState({mineCounter: count});
-            this.setState({boardData: data});
+            setMineCounter(count);
+            setBoardData(data);
         }
     }
 
@@ -280,18 +287,16 @@ class Board extends Component {
      * @returns True if the all tiles are opened and mines are flagged,
      * else False if there are still tiles not opened and mines are not flagged
      */
-    checkWin(count) {
-        const size = this.state.boardSize;
-        let data = this.state.boardData;
-
+    const checkWin = (count) => {
         if (count === 0) {
-            for (let x = 0; x < size; x++) {
-                for (let y = 0; y < size; y++) {
-                    let tile = data[x][y];
+            for (let x = 0; x < boardSize; x++) {
+                for (let y = 0; y < boardSize; y++) {
+                    let tile = boardData[x][y];
                     if ((!tile.hasMine && !tile.click) || (tile.hasMine && !tile.flag)) return false;
                 }
             }
-            this.setState({endGame: true});
+            setEndGame(true);
+            pauseTimer();
             return true;
         }
         return false;
@@ -303,12 +308,10 @@ class Board extends Component {
      * @param {*} count Number of mines left on the board
      * @returns The board game data with its tiles disabled
      */
-    winGame(data, count) {
-        const size = this.state.boardSize;
-
-        if (this.checkWin(count) === true) {
-            for (let x = 0; x < size; x++) {
-                for (let y = 0; y < size; y++) {
+    const winGame = (data, count) => {
+        if (checkWin(count) === true) {
+            for (let x = 0; x < boardSize; x++) {
+                for (let y = 0; y < boardSize; y++) {
                     let tile = data[x][y];
                     if (!tile.hasMine) {
                         tile.color = 'rgb(201,253,241)';
@@ -321,123 +324,106 @@ class Board extends Component {
     }
 
     /**
-     * Start/Resume the game timer
-     */
-    incrementTimer() {
-        this.timer = setInterval(() => {
-            if (this.state.endGame || !this.state.start) {
-                clearInterval(this.timer);
-                return;
-            }
-
-            if (this.state.counter <= 3600 && !this.state.paused) {
-                this.setState({counter: this.state.counter + 1});
-            }
-        }, 1000);
-    }
-
-    /**
      * Start the minesweeper game
      */
-    start() {
-        this.incrementTimer();
-
-        let tileProps = this.state.boardData;
-        const size = this.state.boardSize;
+    const startGame = () => {
+        let data = [...boardData];
+        const size = boardSize;
+        startTimer();
 
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
-                let tile = tileProps[x][y];
+                let tile = data[x][y];
                 tile.disabled = false;
             }
         }
-
-        this.setState({start: true, paused: false});
+        setBoardData(data);
+        setStart(true);
     }
 
     /**
      * Go back to the board if the user does
      * not want to save the game
      */
-    goToBoard() {
-        this.setState({saved: false, paused: false});
-        this.incrementTimer();
+    const goToBoard = () => {
+        setSaved(false);
+        setPaused(false);
+        startTimer();
     }
 
     /**
      * Show the save menu if it exists to allow the user to overwrite
      * an existing save or create a new save
      */
-    createNewSave() {
-        this.setState({newSave: true});
+    const createNewSave = () => {
+        setNewSave(true);
     }
 
     /**
      * Get the list of boards saved on the backend server
      */
-    getBoards = async() => {
+    const getBoards = async() => {
         try {
-            this.setState({saveError: false});
+            setSaveError(false);
             let data = await api.get('/').then(({data}) => data);
-            this.setState({boards: data});
+            setBoards(data);
         } catch (err) {
             console.log(err);
-            this.setState({saveError: true});
+            setSaveError(true);
         }
     }
 
-    render() {
-        const { boards, boardSize, boardData, counter, saved, firstClick, totalMines, mineCounter, endGame, timer, paused, newSave, start, saveError } = this.state;
-
-        const data = {
-            boards: boards,
-            boardSize: boardSize,
-            boardData: boardData,
-            counter: counter,
-            saved: saved,
-            firstClick: firstClick,
-            totalMines: totalMines,
-            mineCounter: mineCounter,
-            endGame: endGame,
-            timer: timer,
-            paused: paused,
-            newSave: newSave,
-            start: start
-        }
-
-        return(
-            <div>
-                {(saved) ?
-                    <div>
-                        {(boards.length > 0 && !newSave)
-
-                            ? <SaveMenu
-                                goToBoard={() => this.goToBoard()}
-                                createNewSave={() => this.createNewSave()}
-                                saveRequest={() => this.saveRequest()}
-                                data={data}
-                            />
-
-                            : <Save 
-                                saveRequest={() => this.saveRequest()}
-                                goToBoard={() => this.goToBoard()}
-                                data={data}
-                                saveError={saveError}
-                            />
-                        }
-                    </div> 
-                    : 
-                    <Game
-                        data={data}
-                        reset={() => this.reset()}
-                        start={() => this.start()}
-                        saveRequest={() => this.saveRequest()}
-                        displayBoard={() => this.displayBoard(boardData)}
-                    />
-                }
-            </div>
-        );
+    /**
+     * Data to be passed to the child components
+     */
+    const data = {
+        boards: boards,
+        boardSize: boardSize,
+        boardData: boardData,
+        saved: saved,
+        firstClick: firstClick,
+        totalMines: totalMines,
+        mineCounter: mineCounter,
+        endGame: endGame,
+        paused: paused,
+        newSave: newSave,
+        start: start,
+        counter: (minutes * 60) + seconds,
     }
+
+    return(
+        <div>
+            {(saved) ?
+                <div>
+                    {(boards.length > 0 && !newSave)
+
+                        ? <SaveMenu
+                            goToBoard={goToBoard}
+                            createNewSave={createNewSave}
+                            saveRequest={saveRequest}
+                            data={data}
+                        />
+
+                        : <Save 
+                            saveRequest={saveRequest}
+                            goToBoard={goToBoard}
+                            data={data}
+                            saveError={saveError}
+                        />
+                    }
+                </div> 
+                : 
+                <Game
+                    data={data}
+                    reset={reset}
+                    startGame={startGame}
+                    saveRequest={saveRequest}
+                    displayBoard={displayBoard(boardData)}
+                    hours={hours}
+                />
+            }
+        </div>
+    );
 }
 
 export default withRouter(Board);

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
-import { timeFormat } from '../GameLogic.js'
+import { timeFormat } from './GameLogic.js';
 
 const styles = {
     counter: {
@@ -38,39 +38,34 @@ const styles = {
 /**
  * The minesweeper board game that displays the tiles in the same number of rows and columns
  */
-class Game extends Component {
+export default function Game({ data, displayBoard, reset, saveRequest, startGame }) {
+    const { mineCounter, firstClick, endGame, start, counter } = data;
 
-    render() {
-        const { boardData, counter, mineCounter, firstClick, endGame, start } = this.props.data;
-
-        return(
-            <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
-                <div style={styles.menuBar}>
-                    <div style={styles.counter}>Mines Remaining: {mineCounter}</div>
-                    <div style={styles.timer}>Time: {timeFormat(counter)}</div>
-                    <div style={styles.reset}>
-                        <Button variant="primary" size={"lg"} disabled={!start} onClick={this.props.reset}>Reset</Button>
-                    </div>
-                    
-                    <div style={styles.reset}>
-                        <Button variant="warning" size={"lg"} onClick={this.props.saveRequest} disabled={endGame || !start}>Save</Button>
-                    </div>
-
-                    {(!start && !firstClick) ?
-                        <div style={styles.reset}>
-                            <Button variant="danger" size={"lg"} onClick={this.props.start}>Start</Button>
-                        </div> 
-                    :
-                        <></>
-                    }
+    return(
+        <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+            <div style={styles.menuBar}>
+                <div style={styles.counter}>Mines Remaining: {mineCounter}</div>
+                <div style={styles.timer}>Time: {timeFormat(counter)}</div>
+                <div style={styles.reset}>
+                    <Button variant="primary" size={"lg"} disabled={!start} onClick={reset}>Reset</Button>
+                </div>
+                
+                <div style={styles.reset}>
+                    <Button variant="warning" size={"lg"} onClick={saveRequest} disabled={endGame || !start}>Save</Button>
                 </div>
 
-                <div className={"board"} style={styles.board}>
-                    {this.props.displayBoard(boardData)}
-                </div>
+                {(!start && !firstClick) ?
+                    <div style={styles.reset}>
+                        <Button variant="danger" size={"lg"} onClick={startGame}>Start</Button>
+                    </div> 
+                :
+                    <></>
+                }
             </div>
-        );
-    }
-}
 
-export default Game;
+            <div className={"board"} style={styles.board}>
+                {displayBoard}
+            </div>
+        </div>
+    );
+}

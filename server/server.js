@@ -68,7 +68,7 @@ app.get("/api/boards", (req, res) => {
 app.get('/api/boards/:id', (req, res) => {
 
     let boards = read();
-
+    
     const board = boards.find(b => b.id === req.params.id);
 
     if (!board) { // 404 object not found
@@ -90,7 +90,6 @@ app.post('/api/boards', (req, res) => {
     const board = {
         id: req.body.id,
         boardSize: req.body.boardSize,
-        counter: req.body.counter,
         endGame: req.body.endGame,
         firstClick: req.body.firstClick,
         mineCounter: req.body.mineCounter,
@@ -102,12 +101,13 @@ app.post('/api/boards', (req, res) => {
         boardData: req.body.boardData,
         start: req.body.start
     }
-    
+
     if (fs.existsSync(FILE)) {
         boards = read();
     }
+    
     boards.push(board);
-
+    
     write(boards);
 
     res.send(board);
@@ -136,7 +136,6 @@ app.put('/api/boards/:id', (req, res) => {
     board.mineCounter = req.body.mineCounter;
     board.name = req.body.name;
     board.paused = req.body.paused;
-    board.counter = req.body.counter;
     board.totalMines = req.body.totalMines;
     board.boardData = req.body.boardData;
     board.start = req.body.start;

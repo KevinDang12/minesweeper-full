@@ -77,25 +77,11 @@ export function date(unixTime) {
  * @param time The number of seconds that has passed
  * @returns {string} String format of the timer
  */
-export function timeFormat(time) {
-    if (time <= 0) {
-        return "00:00";
+export function timeFormat(counter) {
+    let minutes = String(Math.floor(counter / 60)).padStart(2, '0');
+    let seconds = String(counter % 60).padStart(2, '0');
 
-    } else if (time > 0 && time < 60) {
-        if (time < 10) {
-            return "00:0" + time;
-        } else {
-            return "00:" + time;
-        }
-    } else if (time >= 60) {
-        let seconds = String(time % 60);
-        let minutes = String(Math.floor(time / 60));
-
-        if (minutes < 10) minutes = "0" + minutes;
-        if (seconds < 10) seconds = "0" + seconds;
-
-        return minutes + ":" + seconds;
-    }
+    return minutes + ":" + seconds;
 }
 
 /**

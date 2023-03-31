@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import './Save.css';
 import axios from 'axios';
-import { timeFormat, date } from '../GameLogic.js';
+import { timeFormat, date } from './GameLogic.js';
 import { v4 as uuid } from 'uuid';
 import { Jump } from './Jump';
 
@@ -14,33 +14,27 @@ const api = axios.create({
  * Component to save the current Minesweeper game
  * and display information of the current game
  */
-class Save extends Component {
+export default function Save(props) {
 
-    constructor(props) {
-        super(props);
+    const { mineCounter, counter, boardSize } = props.data;
+    const { saveError, saveRequest, goToBoard } = props;
+    const urlId = props.id ? props.id : null;
 
-        const {id} = this.props;
-        const time = Math.floor(Date.now());
+    const [name, setName] = useState('');
+    const [noName, setNoName] = useState(false);
+    const [time, setTime] = useState(null);
 
-        this.state = {
-            name: "",
-            id: (id) ? id : null,
-            noName: false,
-            time: time
-        }
-        this.getNameValue = this.getNameValue.bind(this);
-        this.save = this.save.bind(this);
-    }
+    useEffect(() => {
+        setTime(Math.floor(Date.now()));
+    }, []);
 
     /**
      * Set the name of the save file
      * @param {*} e 
      */
-    getNameValue(e) {
-        const key = e.target.id;
+    const getNameValue = (e) => {
         const value = e.target.value
-
-        this.setState({[key]: value});
+        setName(value);
     }
 
     /**
@@ -48,113 +42,106 @@ class Save extends Component {
      * or update an existing Minesweeper game 
      * as a JSON to the backend server
      */
-    save() {
-        const { mineCounter, counter, boardSize, boardData, firstClick, totalMines, endGame, timer, paused, start } = this.props.data;
+    const save = () => {
+        const { mineCounter, boardSize, boardData, firstClick, totalMines, endGame, paused, start, counter } = props.data;
 
-        const id = uuid();
+        let id;
+
+        if (!urlId) {
+            id = uuid();
+        } else {
+            id = urlId;
+        }
 
         const text = {
             id: id,
-            name: this.state.name,
+            name: name,
             mineCounter: mineCounter,
-            counter: counter,
             boardSize: boardSize,
             boardData: boardData,
             firstClick: firstClick,
             totalMines: totalMines,
             endGame: endGame,
-            timer: timer,
             paused: paused,
-            start: start
+            start: start,
+            counter: counter,
         }
 
         let url = "/";
         let func = api.post;
 
-        if (this.state.id) {
-            url += this.state.id;
+        if (urlId) {
+            id = urlId;
+            url += urlId;
             func = api.put;
         }
 
-        if (this.state.name.length <= 0 || this.state.name === "") {
-            this.setState({noName: true})
+        if (name.length <= 0 || name === "") {
+            setNoName(true);
             return;
         }
 
         func(url, text)
-            .then(result => {
+            .then(() => {
                 alert("Your game is saved.");
-                
-                this.setState({
-                    name: "",
-                    full: false
-                });
-
-                this.props.goToBoard();
-
+                setNoName(false);
+                goToBoard();
             })
             .catch(err => {
                 console.log(err.response);
                 alert("Unable to save game");
-                this.props.goToBoard();
+                goToBoard();
         });
 
         return id;
     };
-    
-    render() {
-        const { mineCounter, counter, boardSize } = this.props.data;
-        const { saveError, saveRequest } = this.props;
 
-        return (
-            <div align="center">
-                <br/>
-                <Form>
-                    <Form.Group className='save'>
-                        <Form.Label>Save Name:</Form.Label>
-                        <Form.Control value={this.state.name} id="name" type="text" placeholder="Give a name for your save" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange={this.getNameValue}/>
-                    </Form.Group>
+    return (
+        <div align="center">
+            <br/>
+            <Form>
+                <Form.Group className='save'>
+                    <Form.Label>Save Name:</Form.Label>
+                    <Form.Control value={name} id="name" type="text" placeholder="Give a name for your save" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange={getNameValue}/>
+                </Form.Group>
 
-                    <Form.Group className='form'>
-                        <Form.Label>Save Time: {date(this.state.time)}</Form.Label>
-                    </Form.Group>
+                <Form.Group className='form'>
+                    <Form.Label>Save Time: {date(time)}</Form.Label>
+                </Form.Group>
 
-                    <Form.Group className='form'>
-                        <Form.Label>Your total number of mines: {mineCounter}</Form.Label>
-                    </Form.Group>
+                <Form.Group className='form'>
+                    <Form.Label>Your total number of mines: {mineCounter}</Form.Label>
+                </Form.Group>
 
-                    <Form.Group className='form'>
-                        <Form.Label>Your total time: {timeFormat(counter)}</Form.Label>
-                    </Form.Group>
+                <Form.Group className='form'>
+                    <Form.Label>Your total time: {timeFormat(counter)}</Form.Label>
+                </Form.Group>
 
-                    <Form.Group className='form'>
-                        <Form.Label>Your board length: {boardSize}</Form.Label>
-                    </Form.Group>
+                <Form.Group className='form'>
+                    <Form.Label>Your board length: {boardSize}</Form.Label>
+                </Form.Group>
 
-                    {(this.state.noName) ? 
-                        <p className='name'>You must include a name for your save file</p> 
-                    :
-                        <></>
-                    }
+                {(noName) ? 
+                    <p className='name'>You must include a name for your save file</p> 
+                :
+                    <></>
+                }
 
-                    <div className='float-container'>
-                        <div className='float-child-left'>
-                            {(saveError)
-                            ?
-                                <Button variant="success" size={"lg"} onClick={this.save}>Save</Button>
-                            :
-                                <Jump onClick={this.save} />
-                            }
-                        </div>
-
-                        <div className='float-child-right'>
-                            <Button variant="danger" size={"lg"} onClick={saveRequest}>Back</Button>
-                        </div>
+                <div className='float-container'>
+                    <div className='float-child-left'>
+                        {(saveError)
+                        ?
+                            <Button variant="success" size={"lg"} onClick={save}>Save</Button>
+                        :
+                            <Jump onClick={save} />
+                        }
                     </div>
-                </Form>
-            </div>
-        );
-    }
-}
 
-export default Save;
+                    <div className='float-child-right'>
+                        <Button variant="danger" size={"lg"} onClick={saveRequest}>Back</Button>
+                    </div>
+                </div>
+            </Form>
+        </div>
+    );
+}
