@@ -7,6 +7,9 @@
     padding: 10px;
     width: 50%;
     font-size: 20px;
+    text-align: center;
+    display: block;
+    margin: auto;
 }
 
 .float-container {
@@ -17,12 +20,14 @@
     width: 50%;
     float: left;
     padding-left: 100px;
+    text-align: center;
 }
 
 .float-child-right {
     width: 50%;
     float: right;
     padding-right: 100px;
+    text-align: center;
 }
 
 .name {
@@ -32,3 +37,7 @@
     font-size: 20px;
 }
 
+label {
+    display: block;
+    text-align: center;
+}

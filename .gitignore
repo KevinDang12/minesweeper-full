@@ -25,3 +25,7 @@ yarn-error.log*
 
 # save
 /server/saveFile.json
+
+# eslint
+/.vscode
+/.eslintrc.js
