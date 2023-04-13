@@ -1,31 +1,31 @@
-import React from "react";
+import React from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import {Link} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 
 /**
- * Displays the Header containing a link to the Minesweeper game and a link to load a Minesweeper game
- * @returns The Header NavBar that redirects the user to the Load Component and the Minesweeper game Component
+ * Displays the Header containing a link to the
+ * Minesweeper game and a link to load a Minesweeper game
+ * @return {JSX.Element} The Header NavBar that redirects
+ * the user to the Load Component and the Minesweeper game Component
  */
 export default function Header() {
-    const location = useLocation();
-    const url = "/minesweeper"
-    return(
-        <div className="header">
-            <ul className="header-left">
-                <li className="logo">
-                    {(location.pathname === url) 
-                    ? 
-                        <Link to={url + "/game"}>Minesweeper</Link>
-                    :
+  const location = useLocation();
+  const url = '/minesweeper';
+  return (
+    <div className="header">
+      <ul className="header-left">
+        <li className="logo">
+          {(location.pathname === url) ?
+                        <Link to={url + '/game'}>Minesweeper</Link> :
                         <p>Minesweeper</p>
-                    }
-                </li>
-            </ul>
+          }
+        </li>
+      </ul>
 
-            <ul className="header-right">
-                <li><Link to={url}>Load</Link></li>
-            </ul>
-        </div>
-    );
+      <ul className="header-right">
+        <li><Link to={url}>Load</Link></li>
+      </ul>
+    </div>
+  );
 }
