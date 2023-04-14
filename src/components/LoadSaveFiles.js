@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import './Load.css';
 import {Link} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import {date} from './GameLogic.js';
@@ -16,6 +15,8 @@ const api = axios.create({
  * @return {JSX.Element} A table of saved minesweeper games
  */
 export default function LoadSaveFiles() {
+  const url = '/minesweeper';
+
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -41,18 +42,16 @@ export default function LoadSaveFiles() {
     getBoards();
   }, []);
 
-  let content = '';
-  const url = '/minesweeper';
-
   if (loading) {
-    content = <div className='message'>Loading...</div>;
+    return <div className='message'>Loading...</div>;
   } else if (error) {
-    content =
-    <div className='error'>
-        An error ocurred. Please try again later.
-    </div>;
+    return (
+      <div className='error'>
+          An error ocurred. Please try again later.
+      </div>
+    );
   } else {
-    content = (
+    return (
       <div className='Load-Menu'>
         <h1>Save Files</h1>
         {(boards.length <= 0) ?
@@ -90,5 +89,4 @@ export default function LoadSaveFiles() {
       </div>
     );
   }
-  return content;
 }

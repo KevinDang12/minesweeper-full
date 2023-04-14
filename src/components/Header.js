@@ -12,6 +12,7 @@ import {useLocation} from 'react-router-dom';
 export default function Header() {
   const location = useLocation();
   const url = '/minesweeper';
+
   return (
     <div className="header">
       <ul className="header-left">

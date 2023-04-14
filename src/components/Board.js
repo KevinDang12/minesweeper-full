@@ -82,7 +82,7 @@ function Board(props) {
               start,
             } = result.data;
 
-            // Set the timer to the time that was saved
+            // Set the timer to the time that was saved on the backend server
             const time = new Date();
             time.setSeconds(time.getSeconds() + counter);
             resetTimer(time, true);
