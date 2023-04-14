@@ -23,6 +23,9 @@ export default function SaveMenu(props) {
   const [newSave, setNewSave] = useState(false);
   const [id, setId] = useState(null);
 
+  const {saveRequest, goToBoard, createNewSave} = props;
+  const {boards} = props.data;
+
   /**
      * Pass the data of the save board to update
      * @param {string} id Get the board using the id
@@ -32,9 +35,6 @@ export default function SaveMenu(props) {
     setNewSave(true);
     setId(board.id);
   };
-
-  const {saveRequest, goToBoard, createNewSave} = props;
-  const {boards} = props.data;
 
   return (
     <div>
@@ -85,7 +85,7 @@ export default function SaveMenu(props) {
                   id={id}
                   saveRequest={saveRequest}
                   goToBoard={goToBoard}
-                  data={data}
+                  data={props.data}
                 />
       }
     </div>

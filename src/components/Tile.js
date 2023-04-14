@@ -29,6 +29,8 @@ Tile.propTypes = {
  * @return {JSX.Element} The tile component
  */
 export default function Tile(props) {
+  const {color, onRightClick, disabled, onLeftClick} = props;
+
   /**
      * Set the image of the tile for the number of adjacent mines,
      * a flag indicator, or a mine if the game has ended
@@ -48,8 +50,6 @@ export default function Tile(props) {
     }
     return null;
   };
-
-  const {color, onRightClick, disabled, onLeftClick} = props;
 
   return (
     <button
