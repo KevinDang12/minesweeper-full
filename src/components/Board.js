@@ -48,8 +48,8 @@ function Board(props) {
   const [newSave, setNewSave] = useState(false);
 
   /**
-     * React Timer Hook
-     */
+   * React Timer Hook
+   */
   const {
     seconds,
     minutes,
@@ -60,9 +60,9 @@ function Board(props) {
   } = useStopwatch({autoStart: false});
 
   /**
-     * If a board id was found,
-     * get the board data from the database
-     */
+   * If a board id was found,
+   * get the board data from the database
+   */
   useEffect(() => {
     if (id) {
       axios.get(`${window.location.origin}/api/boards/` + id)
@@ -97,8 +97,8 @@ function Board(props) {
   }, [id]);
 
   /**
-     * Check if the timer has exceeded 60 minutes
-     */
+   * Check if the timer has exceeded 60 minutes
+   */
   useEffect(() => {
     if (hours === 1) {
       pauseTimer();
@@ -106,9 +106,9 @@ function Board(props) {
   });
 
   /**
-     * If the game is being saved,
-     * pause the game timer and prepare the board data to be saved
-     */
+   * If the game is being saved,
+   * pause the game timer and prepare the board data to be saved
+   */
   const saveRequest = () => {
     if (saved) {
       setNewSave(true);
@@ -130,8 +130,8 @@ function Board(props) {
   };
 
   /**
-     * Reset the minesweeper game
-     */
+   * Reset the minesweeper game
+   */
   const reset = () => {
     setBoardData(initTileProperties(boardSize));
     setFirstClick(false);
@@ -146,11 +146,11 @@ function Board(props) {
   };
 
   /**
-     * Display the minesweeper game using the game data
-     * @param {[]} data Array of minesweeper tiles
-     * @return {[]} Minesweeper board arranged in the
-     * same number of rows and columns
-     */
+   * Display the minesweeper game using the game data
+   * @param {[]} data Array of minesweeper tiles
+   * @return {[]} Minesweeper board arranged in the
+   * same number of rows and columns
+   */
   const displayBoard = (data) => {
     let rows = [];
     const board = [];
@@ -178,13 +178,13 @@ function Board(props) {
   };
 
   /**
-     * Set the number of adjacent mines for
-     * each tile and find the total mines
-     * @param {number} tileX X coordinate of the tile
-     * @param {number} tileY Y coordinate of the tile
-     * @param {[]} boardData Board data of the tiles in the game
-     * @return {[]} The board data
-     */
+   * Set the number of adjacent mines for
+   * each tile and find the total mines
+   * @param {number} tileX X coordinate of the tile
+   * @param {number} tileY Y coordinate of the tile
+   * @param {[]} boardData Board data of the tiles in the game
+   * @return {[]} The board data
+   */
   const findAdjacentMines = (tileX, tileY, boardData) => {
     const {data, count} = numberOfMines(tileX, tileY, boardData, boardSize);
 
@@ -195,11 +195,11 @@ function Board(props) {
   };
 
   /**
-     * Left mouse click, start the game timer on first
-     * click and open the selected tile
-     * @param {number} x X coordinate of the selected tile
-     * @param {number} y Y coordinate of the selected tile
-     */
+   * Left mouse click, start the game timer on first
+   * click and open the selected tile
+   * @param {number} x X coordinate of the selected tile
+   * @param {number} y Y coordinate of the selected tile
+   */
   const leftClick = (x, y) => {
     const data = [...boardData];
 
@@ -211,13 +211,13 @@ function Board(props) {
   };
 
   /**
-     * If the user click on a mine, the game will end, if
-     * a tile is not flagged or clicked, the selected tile,
-     * and the adjacent tiles will be opened on the board
-     * @param {number} x X-coordinates of the selected tile
-     * @param {number} y Y-coordinates of the selected tile
-     * @param {[]} data Board game data to update
-     */
+   * If the user click on a mine, the game will end, if
+   * a tile is not flagged or clicked, the selected tile,
+   * and the adjacent tiles will be opened on the board
+   * @param {number} x X-coordinates of the selected tile
+   * @param {number} y Y-coordinates of the selected tile
+   * @param {[]} data Board game data to update
+   */
   const clearArea = (x, y) => {
     const data = [...boardData];
     const tile = data[x][y];
@@ -248,13 +248,13 @@ function Board(props) {
   };
 
   /**
-     * Overwrites the default right mouse click, adds a flag
-     * on a tile if it has not yet been selected by the user
-     * @param {MouseEvent} e Mouse event to prevent menu from
-     * appearing on the tile
-     * @param {number} x X-coordinates of the selected tile
-     * @param {number} y -coordinates of the selected tile
-     */
+   * Overwrites the default right mouse click, adds a flag
+   * on a tile if it has not yet been selected by the user
+   * @param {MouseEvent} e Mouse event to prevent menu from
+   * appearing on the tile
+   * @param {number} x X-coordinates of the selected tile
+   * @param {number} y -coordinates of the selected tile
+   */
   const rightClick = (e, x, y) => {
     e.preventDefault();
 
@@ -291,13 +291,13 @@ function Board(props) {
   };
 
   /**
-     * Check the entire minesweeper board on whether the user
-     * open all the tiles and flagged the tiles containing
-     * the mines
-     * @param {number} count Number of mines left on the board
-     * @return {Boolean} True if the all tiles are opened and mines are flagged,
-     * else False if there are still tiles not opened and mines are not flagged
-     */
+   * Check the entire minesweeper board on whether the user
+   * open all the tiles and flagged the tiles containing
+   * the mines
+   * @param {number} count Number of mines left on the board
+   * @return {Boolean} True if the all tiles are opened and mines are flagged,
+   * else False if there are still tiles not opened and mines are not flagged
+   */
   const checkWin = (count) => {
     if (count === 0) {
       for (let x = 0; x < boardSize; x++) {
@@ -315,12 +315,12 @@ function Board(props) {
   };
 
   /**
-     * End the game if all the tiles with mines are
-     * found and the tiles are opened, the game timer will stop
-     * @param {[]} data Board game data to update
-     * @param {number} count Number of mines left on the board
-     * @return {[]} The board game data with its tiles disabled
-     */
+   * End the game if all the tiles with mines are
+   * found and the tiles are opened, the game timer will stop
+   * @param {[]} data Board game data to update
+   * @param {number} count Number of mines left on the board
+   * @return {[]} The board game data with its tiles disabled
+   */
   const winGame = (data, count) => {
     if (checkWin(count) === true) {
       for (let x = 0; x < boardSize; x++) {
@@ -337,8 +337,8 @@ function Board(props) {
   };
 
   /**
-     * Start the minesweeper game
-     */
+   * Start the minesweeper game
+   */
   const startGame = () => {
     const data = [...boardData];
     const size = boardSize;
@@ -355,9 +355,9 @@ function Board(props) {
   };
 
   /**
-     * Go back to the board if the user does
-     * not want to save the game
-     */
+   * Go back to the board if the user does
+   * not want to save the game
+   */
   const goToBoard = () => {
     setSaved(false);
     setPaused(false);
@@ -365,16 +365,16 @@ function Board(props) {
   };
 
   /**
-     * Show the save menu if it exists to allow the user to overwrite
-     * an existing save or create a new save
-     */
+   * Show the save menu if it exists to allow the user to overwrite
+   * an existing save or create a new save
+   */
   const createNewSave = () => {
     setNewSave(true);
   };
 
   /**
-     * Get the list of boards saved on the backend server
-     */
+   * Get the list of boards saved on the backend server
+   */
   const getBoards = async () => {
     try {
       setSaveError(false);
@@ -388,8 +388,8 @@ function Board(props) {
   };
 
   /**
-     * Data to be passed to the child components
-     */
+   * Data to be passed to the child components
+   */
   const data = {
     boards: boards,
     boardSize: boardSize,

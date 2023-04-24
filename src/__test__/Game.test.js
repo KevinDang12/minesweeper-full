@@ -6,7 +6,7 @@ import Game from '../components/Game';
  * Test the Game component to make sure it renders
  * by getting the data-testid from the Game component
  */
-test('renders Game', () => {
+test('Renders Game component', () => {
   render(<Game
     reset={() => {}}
     saveRequest={() => {}}

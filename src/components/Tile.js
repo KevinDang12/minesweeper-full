@@ -32,11 +32,11 @@ export default function Tile(props) {
   const {color, onRightClick, disabled, onLeftClick} = props;
 
   /**
-     * Set the image of the tile for the number of adjacent mines,
-     * a flag indicator, or a mine if the game has ended
-     * @return {null|*} Null if there are no
-     * adjacent mines, else a minesweeper image
-     */
+   * Set the image of the tile for the number of adjacent mines,
+   * a flag indicator, or a mine if the game has ended
+   * @return {null|*} Null if there are no
+   * adjacent mines, else a minesweeper image
+   */
   const getImage = () => {
     const images = [one, two, three, four, five, six, seven, eight, mine, flag];
     const {value, click, endGame} = props;
