@@ -6,7 +6,7 @@ import Save from '../components/Save';
  * Test the Save component to make sure it renders
  * by getting the data-testid from the Save component
  */
-test('renders Save Components', () => {
+test('renders Save component', () => {
   render(<Save
     data={{
       mineCounter: 0,

@@ -18,9 +18,9 @@ export function Jump(props) {
   const url = '/minesweeper/game/';
 
   /**
-     * Redirect the user to the new URL after
-     * saving their minesweeper game
-     */
+   * Redirect the user to the new URL after
+   * saving their minesweeper game
+   */
   const jumpToRoute = () => {
     try {
       const id = props.onClick();

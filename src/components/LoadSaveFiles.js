@@ -17,8 +17,8 @@ export default function LoadSaveFiles() {
   const [loading, setLoading] = useState(true);
 
   /**
-     * Get the list of boards saved on the backend server
-     */
+   * Get the list of boards saved on the backend server
+   */
   const getBoards = async () => {
     try {
       const response = await axios.get(`${window.location.origin}/api/boards/`);

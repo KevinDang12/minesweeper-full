@@ -9,6 +9,8 @@ import {waitFor} from '@testing-library/dom';
 // cleaning up the mess left behind the previous test
 afterEach(cleanup);
 
+jest.mock('axios');
+
 /**
  * Test the LoadSaveFiles component to make sure it renders
  * by getting the data-testid from the LoadSaveFiles component

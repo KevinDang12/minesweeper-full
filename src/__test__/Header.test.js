@@ -7,7 +7,7 @@ import {BrowserRouter} from 'react-router-dom';
  * Test the Header component to make sure it renders
  * by getting the data-testid from the Header component
  */
-test('renders Header', () => {
+test('Renders Header component', () => {
   render(<BrowserRouter>
     <Header/>
   </BrowserRouter>);

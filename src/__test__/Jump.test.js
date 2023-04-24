@@ -6,7 +6,7 @@ import {Jump} from '../components/Jump';
  * Test the Jump component to make sure it renders
  * by getting the data-testid from the Jump component
  */
-test('renders Jump', () => {
+test('Renders Jump component', () => {
   render(<Jump
     onClick={() => {}}
   />);

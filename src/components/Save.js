@@ -38,9 +38,9 @@ export default function Save(props) {
   }, []);
 
   /**
-     * Set the name of the save file
-     * @param {Event} e
-     */
+   * Set the name of the save file
+   * @param {Event} e
+   */
   const getNameValue = (e) => {
     const value = e.target.value;
     setName(value);
@@ -123,6 +123,7 @@ export default function Save(props) {
         <Form.Group className='save'>
           <Form.Label>Save Name:</Form.Label>
           <Form.Control
+            data-testid="save-name"
             value={name}
             id="name"
             type="text"
@@ -156,7 +157,7 @@ export default function Save(props) {
         <div className='float-container'>
           <div className='float-child-left'>
             {(saveError) ?
-                <Button
+                <Button data-testid="save-button"
                   variant="success"
                   size={'lg'}
                   onClick={saveGame}>

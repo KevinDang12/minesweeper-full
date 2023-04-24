@@ -27,9 +27,9 @@ export default function SaveMenu(props) {
   const {boards} = props.data;
 
   /**
-     * Pass the data of the save board to update
-     * @param {string} id Get the board using the id
-     */
+   * Pass the data of the save board to update
+   * @param {string} id Get the board using the id
+   */
   const saveBoard = (id) => {
     const board = props.data.boards.find((b) => b.id === id);
     setNewSave(true);

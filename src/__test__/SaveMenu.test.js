@@ -6,7 +6,7 @@ import SaveMenu from '../components/SaveMenu';
  * Test the SaveMenu component to make sure it renders
  * by getting the data-testid from the SaveMenu component
  */
-test('renders SaveMenu Components', () => {
+test('renders SaveMenu component', () => {
   render(<SaveMenu
     saveRequest={() => {}}
     goToBoard={() => {}}
