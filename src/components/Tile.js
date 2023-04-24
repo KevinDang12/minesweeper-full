@@ -53,6 +53,7 @@ export default function Tile(props) {
 
   return (
     <button
+      data-testid="tile"
       className={'tile'}
       onContextMenu={onRightClick}
       style={{

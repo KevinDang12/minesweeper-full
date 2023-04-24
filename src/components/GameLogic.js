@@ -1,5 +1,5 @@
 import React from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 
 /**
  * Find the parameters from the Child component that is called on
@@ -10,8 +10,7 @@ import {useLocation, useParams} from 'react-router-dom';
 export function router(Child) {
   const routerParameters = ( props ) => {
     const params = useParams();
-    const location = useLocation();
-    return <Child { ...props } params={ params } location={ location }/>;
+    return <Child { ...props } params={ params }/>;
   };
 
   return routerParameters;
@@ -31,7 +30,7 @@ export function initTileProperties(size) {
       tileProps[x][y] = {
         x: x,
         y: y,
-        value: '',
+        value: 0,
         color: 'rgb(161,160,160)',
         click: false,
         hasMine: false,

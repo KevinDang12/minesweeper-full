@@ -13,7 +13,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 export default function App() {
   const url = '/minesweeper';
   return (
-    <Router forceRefresh={true}>
+    <Router>
       <div>
         <Header />
         <div className='Heading'>

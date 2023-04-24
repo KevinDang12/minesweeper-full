@@ -19,13 +19,9 @@ const styles = {
   },
 };
 
-const api = axios.create({
-  baseURL: `${window.location.origin}/api/boards`,
-});
-
 Board.propTypes = {
   params: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
   }).isRequired,
 };
 
@@ -51,7 +47,6 @@ function Board(props) {
   const [saveError, setSaveError] = useState(false);
   const [newSave, setNewSave] = useState(false);
 
-
   /**
      * React Timer Hook
      */
@@ -70,7 +65,7 @@ function Board(props) {
      */
   useEffect(() => {
     if (id) {
-      api.get('/' + id)
+      axios.get(`${window.location.origin}/api/boards/` + id)
           .then((result) => {
             const {
               boardData,
@@ -164,7 +159,7 @@ function Board(props) {
       for (let y = 0; y < data[x].length; y++) {
         rows.push(
             <Tile
-              key={x + ' ' + y}
+              key={parseInt(x.toString() + y.toString())}
               onLeftClick={() => leftClick(x, y)}
               onRightClick={(e) => rightClick(e, x, y)}
               color={data[x][y].color}
@@ -383,7 +378,8 @@ function Board(props) {
   const getBoards = async () => {
     try {
       setSaveError(false);
-      const data = await api.get('/').then(({data}) => data);
+      const data = await axios.get(`${window.location.origin}/api/boards/`)
+          .then(({data}) => data);
       setBoards(data);
     } catch (err) {
       console.log(err);
@@ -410,32 +406,32 @@ function Board(props) {
   };
 
   return (
-    <div>
+    <div data-testid="board">
       {(saved) ?
-                <div>
-                  {(boards.length > 0 && !newSave) ?
-                        <SaveMenu
-                          goToBoard={goToBoard}
-                          createNewSave={createNewSave}
-                          saveRequest={saveRequest}
-                          data={data}
-                        /> :
-                        <Save
-                          saveRequest={saveRequest}
-                          goToBoard={goToBoard}
-                          data={data}
-                          saveError={saveError}
-                        />
-                  }
-                </div> :
-                <Game
-                  data={data}
-                  reset={reset}
-                  startGame={startGame}
-                  saveRequest={saveRequest}
-                  displayBoard={displayBoard(boardData)}
-                  hours={hours}
-                />
+      <div>
+        {(boards.length > 0 && !newSave) ?
+        <SaveMenu
+          goToBoard={goToBoard}
+          createNewSave={createNewSave}
+          saveRequest={saveRequest}
+          data={data}
+        /> :
+        <Save
+          saveRequest={saveRequest}
+          goToBoard={goToBoard}
+          data={data}
+          saveError={saveError}
+        />
+        }
+      </div> :
+      <Game
+        data={data}
+        reset={reset}
+        startGame={startGame}
+        saveRequest={saveRequest}
+        displayBoard={displayBoard(boardData)}
+        hours={hours}
+      />
       }
     </div>
   );

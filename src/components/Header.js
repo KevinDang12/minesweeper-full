@@ -1,7 +1,6 @@
 import React from 'react';
 import './Header.css';
-import {Link} from 'react-router-dom';
-import {useLocation} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 
 /**
  * Displays the Header containing a link to the
@@ -17,15 +16,15 @@ export default function Header() {
     <div className="header">
       <ul className="header-left">
         <li className="logo">
-          {(location.pathname === url) ?
-                        <Link to={url + '/game'}>Minesweeper</Link> :
-                        <p>Minesweeper</p>
+          {(location.pathname === (url)) ?
+          <Link to={url + '/game'}>Minesweeper</Link> :
+          <p>Minesweeper</p>
           }
         </li>
       </ul>
 
       <ul className="header-right">
-        <li><Link to={url}>Load</Link></li>
+        <li><Link data-testid="load-link" to={url}>Load</Link></li>
       </ul>
     </div>
   );

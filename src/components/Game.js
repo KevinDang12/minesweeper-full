@@ -37,11 +37,11 @@ const styles = {
 };
 
 Game.propTypes = {
-  data: PropTypes.object.isRequired,
   reset: PropTypes.func.isRequired,
   saveRequest: PropTypes.func.isRequired,
   startGame: PropTypes.func.isRequired,
   displayBoard: PropTypes.array.isRequired,
+  data: PropTypes.object.isRequired,
 };
 
 /**
@@ -55,7 +55,10 @@ export default function Game(props) {
   const {mineCounter, firstClick, endGame, start, counter} = data;
 
   return (
-    <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+    <div
+      data-testid="game"
+      style={{display: 'flex', flexDirection: 'row', width: '100%'}}
+    >
       <div style={styles.menuBar}>
         <div style={styles.counter}>Mines Remaining: {mineCounter}</div>
         <div style={styles.timer}>Time: {timeFormat(counter)}</div>
@@ -80,15 +83,15 @@ export default function Game(props) {
         </div>
 
         {(!start && !firstClick) ?
-                    <div style={styles.reset}>
-                      <Button
-                        variant="danger"
-                        size={'lg'}
-                        onClick={startGame}
-                      >Start
-                      </Button>
-                    </div> :
-                    <></>
+          <div style={styles.reset}>
+            <Button
+              variant="danger"
+              size={'lg'}
+              onClick={startGame}
+            >Start
+            </Button>
+          </div> :
+          <></>
         }
       </div>
 
