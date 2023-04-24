@@ -3,6 +3,10 @@
     padding-top: 3em;
 }
 
+h3 {
+    text-align: center;
+}
+
 .message {
     margin-top: 3em;
     text-align: center;

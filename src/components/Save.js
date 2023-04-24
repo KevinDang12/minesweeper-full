@@ -7,9 +7,6 @@ import {v4 as uuid} from 'uuid';
 import {Jump} from './Jump';
 import PropTypes from 'prop-types';
 
-const api = axios.create({
-  baseURL: `${window.location.origin}/api/boards`,
-});
 
 Save.propTypes = {
   id: PropTypes.string,
@@ -90,13 +87,13 @@ export default function Save(props) {
       counter: counter,
     };
 
-    let url = '/';
-    let func = api.post;
+    let url = `${window.location.origin}/api/boards/`;
+    let func = axios.post;
 
     if (urlId) {
       id = urlId;
       url += urlId;
-      func = api.put;
+      func = axios.put;
     }
 
     if (name.length <= 0 || name === '') {
@@ -120,7 +117,7 @@ export default function Save(props) {
   };
 
   return (
-    <div className='Save-Game'>
+    <div className='Save-Game' data-testid="save">
       <br/>
       <Form>
         <Form.Group className='save'>
@@ -130,7 +127,7 @@ export default function Save(props) {
             id="name"
             type="text"
             placeholder="Give a name for your save"
-            onkeydown={(e) => {
+            onKeyDown={(e) => {
               e.key === 'Enter' && e.preventDefault();
             }} onChange={getNameValue}/>
         </Form.Group>

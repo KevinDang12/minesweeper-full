@@ -37,56 +37,56 @@ export default function SaveMenu(props) {
   };
 
   return (
-    <div>
+    <div data-testid="save-menu">
       {(newSave === false) ?
-                <div className="save-files">
-                  <h2>Select a save slot or create a new save</h2>
-                  <table className='table'>
-                    <thead>
-                      <tr>
-                        <th>Save #</th>
-                        <th>Save Time</th>
-                        <th>Name</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {boards.map((board, index) =>
-                        <tr key={board.id} onClick={() => saveBoard(board.id)}>
-                          <td>{index + 1}</td>
-                          <td>{date(board.unixTime)}</td>
-                          <td>{board.name}</td>
-                        </tr>,
-                      )}
-                    </tbody>
-                  </table>
+      <div className="save-files">
+        <h2>Select a save slot or create a new save</h2>
+        <table className='table'>
+          <thead>
+            <tr>
+              <th>Save #</th>
+              <th>Save Time</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {boards.map((board, index) =>
+              <tr key={board.id} onClick={() => saveBoard(board.id)}>
+                <td>{index + 1}</td>
+                <td>{date(board.unixTime)}</td>
+                <td>{board.name}</td>
+              </tr>,
+            )}
+          </tbody>
+        </table>
 
-                  <Form>
-                    <div className='float-container'>
-                      <div className='float-child-left'>
-                        <Button
-                          variant="success"
-                          size={'lg'}
-                          onClick={createNewSave}>
-                            New Save
-                        </Button>
-                      </div>
-                      <div className='float-child-right'>
-                        <Button
-                          variant="danger"
-                          size={'lg'}
-                          onClick={goToBoard}>
-                            Back
-                        </Button>
-                      </div>
-                    </div>
-                  </Form>
-                </div> :
-                <Save
-                  id={id}
-                  saveRequest={saveRequest}
-                  goToBoard={goToBoard}
-                  data={props.data}
-                />
+        <Form>
+          <div className='float-container'>
+            <div className='float-child-left'>
+              <Button
+                variant="success"
+                size={'lg'}
+                onClick={createNewSave}>
+                  New Save
+              </Button>
+            </div>
+            <div className='float-child-right'>
+              <Button
+                variant="danger"
+                size={'lg'}
+                onClick={goToBoard}>
+                  Back
+              </Button>
+            </div>
+          </div>
+        </Form>
+      </div> :
+      <Save
+        id={id}
+        saveRequest={saveRequest}
+        goToBoard={goToBoard}
+        data={props.data}
+      />
       }
     </div>
   );
